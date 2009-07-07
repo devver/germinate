@@ -40,12 +40,13 @@ module Germinate
         @it.add_line!(":TEXT:\n")
       end
 
-      it "should be in the :text state" do
-        @it.state.should == :text
+      it "should be in the :paragraph state" do
+        @it.state.should == :paragraph
       end
 
       it "should start outputting text" do
         @it.add_line!("check 1 2 3\n")
+        @it.add_line!("\n")
         output_string.should == "check 1 2 3\n"
       end
     end
@@ -73,6 +74,10 @@ module Germinate
         @it.add_line!("# :TEXT:\n")
       end
 
+      it "should be in the :paragraph state" do
+        @it.state.should == :paragraph
+      end
+
       it "should have a comment prefix of '#'" do
         @it.comment_prefix.should == '#'
       end
@@ -80,7 +85,8 @@ module Germinate
       it "should strip '#' prefixes from text" do
         @it.add_line!("# Line 1\n")
         @it.add_line!(" ## Line 2\n")
-        output_string.should == "Line 1\nLine 2\n"
+        @it.add_line!("\n")
+        output_string.should == "Line 1 Line 2\n"
       end
 
       it "should ignore uncommented lines" do
@@ -90,6 +96,11 @@ module Germinate
 
       it "should ignore blank lines" do
         @it.add_line!("   \t\n")
+        output_string.should == ""
+      end
+
+      it "should ignore commented blank lines" do
+        @it.add_line!("#   \t\n")
         output_string.should == ""
       end
     end
@@ -107,7 +118,8 @@ module Germinate
       it "should strip ';' prefixes from text" do
         @it.add_line!("; Line 1\n")
         @it.add_line!(" ;; Line 2\n")
-        output_string.should == "Line 1\nLine 2\n"
+        @it.add_line!(";\n")
+        output_string.should == "Line 1 Line 2\n"
       end
 
       it "should ignore lines with '#' prefixes" do
@@ -116,6 +128,33 @@ module Germinate
       end
     end
     
-    
+    context "in a text section " do
+      before :each do
+        @it.start!
+        @it.add_line!("# :TEXT:\n")
+      end
+
+      it "should join adjacent lines" do
+        @it.add_line!("# foo\n")
+        @it.add_line!("# bar\n")
+        @it.add_line!("\n")
+        output_string.should == "foo bar\n"
+      end
+    end
+
+    context "in a linebreak section" do
+      before :each do
+        @it.start!
+        @it.add_line!("# :TEXT:\n")
+        @it.add_line!("# P1\n")
+        @it.add_line!("\n")
+      end
+
+      it "should finish the section with a double newline" do
+        @it.add_line!("# P2\n")
+        @it.add_line!("\n")
+        output_string.should == "P1\n\nP2\n"
+      end
+    end
   end
 end
