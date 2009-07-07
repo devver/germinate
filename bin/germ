@@ -1,0 +1,25 @@
+#!/usr/bin/env ruby
+
+require File.expand_path(
+    File.join(File.dirname(__FILE__), %w[.. lib germinate]))
+
+require 'main'
+
+Main do
+  argument :source do
+    arity 1
+    validate{|source| Pathname(source).readable?}
+    description "Source file"
+  end
+
+  mode :format do
+    def run
+      File.open(params['source'].value) do |source|
+        application = Germinate::Application.new
+        application.format(source, $stdout, $stderr)
+      end
+    end
+  end
+end
+
+# EOF
