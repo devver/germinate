@@ -2,6 +2,8 @@ require 'ick'
 require 'fattr'
 require File.expand_path("shared_style_attributes", File.dirname(__FILE__))
 
+# A Formatter is responsible for taking content hunks received from an Editor
+# and formatting them for display or publishing.
 class Germinate::ArticleFormatter
   Ick::Returning.belongs_to self
   include Germinate::SharedStyleAttributes

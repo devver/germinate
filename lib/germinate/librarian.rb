@@ -2,6 +2,9 @@ require 'orderedhash'
 require 'fattr'
 require File.expand_path("shared_style_attributes", File.dirname(__FILE__))
 
+# The Librarian is responsible for organizing all the chunks of content derived
+# from reading a source file and making them available for later re-assembly and
+# formatting.
 class Germinate::Librarian
   include Germinate::SharedStyleAttributes
 

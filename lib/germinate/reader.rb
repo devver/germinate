@@ -1,6 +1,10 @@
 require 'alter_ego'
 require 'forwardable'
 
+# The Reader is responsible for reading a source file, breaking it down into
+# into its constituent chunks of text, code, etc., assigning names to them, and
+# filing them away in a Librarian.  It is also responsible for interpreting any
+# special control lines found in the input document.
 class Germinate::Reader
   include AlterEgo
   extend Forwardable

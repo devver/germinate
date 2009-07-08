@@ -1,3 +1,5 @@
+# The Application ties all the other componts together.  It has public methods
+# roughly corresponding commands that the 'germ' command-line tool supports.
 class Germinate::Application
   attr_writer :formatter
 
@@ -10,9 +12,9 @@ class Germinate::Application
     editor    = Germinate::ArticleEditor.new(librarian)
     formatter = Germinate::ArticleFormatter.new(output)
 
-    %w[comment_prefix code_open_bracket code_close_bracket].each do 
+    Germinate::SharedStyleAttributes.fattrs.each do 
       |style_attribute|
-      formatter.send("#{style_attribute}=", librarian.send(style_attribute))
+      formatter.send(style_attribute, librarian.send(style_attribute))
     end
     formatter.start!
     editor.each_hunk do |hunk|

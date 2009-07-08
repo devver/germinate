@@ -1,3 +1,7 @@
+# A Hunk represents a chunk of content.  There are different types of Hunk, like
+# Code or Text, which may be formatted differently by the Formatter.  At its
+# most basic a Hunk is just a list of Strings, each one representing a single
+# line.
 class Germinate::Hunk < ::Array
   attr_accessor :comment_prefix
 

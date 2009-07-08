@@ -1,4 +1,6 @@
 require 'alter_ego'
+
+# Obsolete
 class Germinate::Formatter
   include AlterEgo
 

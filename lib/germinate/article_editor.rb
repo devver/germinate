@@ -1,3 +1,5 @@
+# An Editor is responsible for selecting hunks of text from a Librarian and
+# assembling them into a list for formatting.
 class Germinate::ArticleEditor
   def initialize(librarian)
     @librarian = librarian
