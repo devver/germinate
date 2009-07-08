@@ -10,6 +10,7 @@ Feature: author formats article
     Then the output should look like "<output_file>"
 
   Scenarios:
-    | input_file   | output_file   |
-    | article1.rb  | article1.html |
-    | article2.rb  | article2.html |
+    | input_file      | output_file      |
+    | article1.rb     | article1.html    |
+    | article2.rb     | article2.html    |
+    | code_samples.rb | code_samples.txt |
