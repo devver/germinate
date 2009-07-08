@@ -7,12 +7,8 @@ class Germinate::ArticleEditor
 
   def each_hunk(&block)
     librarian.section_names.each do |section_name|
-      yield Germinate::TextHunk.new(
-        librarian.section(section_name), 
-        librarian.comment_prefix)
-      yield Germinate::CodeHunk.new(
-        librarian.sample(section_name),
-        librarian.comment_prefix)
+      yield librarian.section(section_name)
+      yield librarian.sample(section_name)
     end
   end
 

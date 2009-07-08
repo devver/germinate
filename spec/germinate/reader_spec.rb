@@ -190,6 +190,37 @@ module Germinate
 
     end
 
+    context "given a :SAMPLE: keyword with a name" do
+      before :each do
+        @it << ":SAMPLE: foobar"
+      end
+
+      it "should file following code lines under the given name" do
+        @librarian.should_receive(:add_code!).with("foobar", "line 1")
+        @librarian.should_receive(:add_code!).with("foobar", "line 2")
+
+        @it << "line 1"
+        @it << "line 2"
+      end
+    end
+
+    context "given a :SAMPLE: keyword with custom brackets" do
+      before :each do
+        @line = ':SAMPLE: foobar, { brackets: ["<<", ">>"] }'
+      end
+
+      it "should assign custom bracket attributes to the sample" do
+        @librarian.should_receive(:set_code_attributes!).
+          with("foobar", 
+          { 
+            :code_open_bracket  => "<<", 
+            :code_close_bracket => ">>" 
+          })
+
+        @it << @line
+      end
+    end
+
     context "in text section with comment set" do
       before :each do
         @librarian.stub!(:comment_prefix_known?).and_return(true)

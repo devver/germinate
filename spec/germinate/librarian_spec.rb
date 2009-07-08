@@ -15,8 +15,20 @@ module Germinate
       end
 
       it "should not have code brackets" do
-        @it.code_open_bracket.should == :none
-        @it.code_close_bracket.should == :none
+        @it.code_open_bracket.should be_nil
+        @it.code_close_bracket.should be_nil
+      end
+    end
+
+    Germinate::SharedStyleAttributes.fattrs.each do |attribute|
+      it "should pass the #{attribute} attribute on to text hunks" do
+        @it.send(attribute, "#{attribute}_test")
+        @it.section("first").send(attribute).should == "#{attribute}_test"
+      end
+
+      it "should pass the #{attribute} attribute on to code hunks" do
+        @it.send(attribute, "#{attribute}_test")
+        @it.section("first").send(attribute).should == "#{attribute}_test"
       end
     end
 
@@ -46,6 +58,21 @@ module Germinate
 
       it "should remember the close bracket" do
         @it.code_close_bracket.should == "}"
+      end
+
+    end
+
+    context "given custom code attributes" do
+      before :each do
+        @it.set_code_attributes!(
+          "sample1",
+          :code_open_bracket => "<<",
+          :code_close_bracket => ">>")
+      end
+
+      it "should create the sample (if needed) and assign the attributes" do
+        @it.sample("sample1").code_open_bracket.should == "<<"
+        @it.sample("sample1").code_close_bracket.should == ">>"
       end
     end
 

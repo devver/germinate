@@ -81,12 +81,41 @@ module Germinate
     end
 
     describe "bracket" do
-      before :each do
-        @it = TextTransforms.bracket("[", "]")
+      
+      context "given explicit brackets" do
+        before :each do
+          @it = TextTransforms.bracket("[", "]")
+        end
+
+        it "should bracket lines with the given brackets" do
+          @it.call(["line 1", "line 2"]).should == ["[", "line 1", "line 2", "]"]
+        end
       end
 
-      it "should bracket lines with the given brackets" do
-        @it.call(["line 1", "line 2"]).should == ["[", "line 1", "line 2", "]"]
+      context "given no arguments" do
+        before :each do
+          @hunk = Hunk.new(
+            ["line 1", "line 2"],
+            :code_open_bracket => "{{{", 
+            :code_close_bracket => "}}}")
+          @it = TextTransforms.bracket
+        end
+
+        it "should use brackets specified on hunk" do
+          @it.call(@hunk).should == ["{{{", "line 1", "line 2", "}}}"]
+        end
+      end
+
+      context "given no no brackets" do
+        before :each do
+          @hunk = Hunk.new(
+            ["line 1", "line 2"])
+          @it = TextTransforms.bracket
+        end
+
+        it "should leave the hunk unchanged" do
+          @it.call(@hunk).should == ["line 1", "line 2"]
+        end
       end
     end
   end

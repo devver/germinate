@@ -16,9 +16,9 @@ module Germinate::TextTransforms
         result
       }
       paragraphs.delete_if{|p| p.empty?}
-      paragraphs.map {|paragraph|
+      hunk.dup.replace(paragraphs.map {|paragraph|
         paragraph.join(" ")
-      }
+      })
     }
   end
 
@@ -33,7 +33,7 @@ module Germinate::TextTransforms
 
   def self.erase_comments(comment_prefix)
     lambda { |hunk|
-      hunk.map do |line|
+      hunk.dup.map! do |line|
         if comment_prefix
           if match_data = /^\s*(#{comment_prefix})+\s*/.match(line)
             offset = match_data.begin(0)
@@ -53,7 +53,7 @@ module Germinate::TextTransforms
 
   def self.uncomment(comment_prefix)
     lambda { |hunk|
-      hunk.map do |line|
+      hunk.dup.map! do |line|
         if comment_prefix
           line.sub(/^#{comment_prefix}/,"")
         else
@@ -65,16 +65,18 @@ module Germinate::TextTransforms
 
   def self.rstrip_lines
     lambda { |hunk|
-      hunk.map{|line| line.to_s.rstrip}
+      hunk.dup.map!{|line| line.to_s.rstrip}
     }
   end
 
-  def self.bracket(open_bracket, close_bracket)
+  def self.bracket(open_bracket=nil, close_bracket=nil)
     lambda { |hunk|
-      result = []
-      result << open_bracket unless open_bracket == :none
+      result = hunk.dup
+      result.clear
+      result << (open_bracket || hunk.code_open_bracket)
       result += Array(hunk)
-      result << close_bracket unless close_bracket == :none
+      result << (close_bracket || hunk.code_close_bracket)
+      result.compact!
       result
     }
   end

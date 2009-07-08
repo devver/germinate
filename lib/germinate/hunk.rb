@@ -1,13 +1,17 @@
+require File.expand_path("shared_style_attributes", File.dirname(__FILE__))
+
 # A Hunk represents a chunk of content.  There are different types of Hunk, like
 # Code or Text, which may be formatted differently by the Formatter.  At its
 # most basic a Hunk is just a list of Strings, each one representing a single
 # line.
 class Germinate::Hunk < ::Array
-  attr_accessor :comment_prefix
+  include Germinate::SharedStyleAttributes
 
-  def initialize(contents, comment_prefix=nil)
+  def initialize(contents=[], attributes = {})
     super(contents)
-    self.comment_prefix = comment_prefix
+    attributes.each_pair do |key, value|
+      send(key, value)
+    end
   end
 
   # return a copy with leading and trailing whitespace lines removed

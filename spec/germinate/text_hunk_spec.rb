@@ -5,7 +5,7 @@ module Germinate
   describe TextHunk do
     before :each do
       @comment_prefix = ">>"
-      @it = TextHunk.new(["foo", "bar"], @comment_prefix)
+      @it = TextHunk.new(["foo", "bar"], :comment_prefix => @comment_prefix)
     end
 
     context "when visited by a formatter" do

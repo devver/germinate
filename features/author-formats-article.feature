@@ -49,3 +49,23 @@ Feature: author formats article
       this is my code
       </pre>
       """
+
+  Scenario: override default bracketing
+    Given an article with the contents:
+      """
+      # :BRACKET_CODE: "<pre>", "</pre>"
+      # :TEXT: SECTION1
+      # This is my article
+    
+      # :SAMPLE: SECTION1, { brackets: [ '[code]', '[/code]' ] }
+      this is my code 
+      """
+    When I run the format command on the article
+    Then the output should be as follows:
+      """
+      This is my article
+  
+      [code]
+      this is my code
+      [/code]
+      """

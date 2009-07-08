@@ -69,7 +69,7 @@ class Germinate::ArticleFormatter
       transforms << Germinate::TextTransforms.strip_blanks if strip_blanks?
       transforms << Germinate::TextTransforms.rstrip_lines if rstrip_lines?
       transforms << 
-        Germinate::TextTransforms.bracket(code_open_bracket, code_close_bracket)
+        Germinate::TextTransforms.bracket
     end
   end
 end

@@ -18,8 +18,12 @@ class Germinate::Librarian
     @text_lines         = []
     @code_lines         = []
     @front_matter_lines = []
-    @sections           = OrderedHash.new do |hash, key| hash[key] = [] end
-    @samples            = OrderedHash.new do |hash, key| hash[key] = [] end
+    @sections           = OrderedHash.new do |hash, key| 
+      hash[key] = Germinate::TextHunk.new([], shared_style_attributes)
+    end
+    @samples            = OrderedHash.new do |hash, key| 
+      hash[key] = Germinate::CodeHunk.new([], shared_style_attributes)
+    end
   end
 
   def add_front_matter!(line)
@@ -41,6 +45,12 @@ class Germinate::Librarian
     add_line!(line)
     @code_lines << line
     @samples[sample] << line
+  end
+
+  def set_code_attributes!(sample, attributes)
+    attributes.each_pair do |key, value| 
+      @samples[sample].send(key, value)
+    end
   end
 
   def comment_prefix_known?

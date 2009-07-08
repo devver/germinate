@@ -66,10 +66,6 @@ module Germinate
         @librarian.add_code!("SECTION1", "this is the code")
       end
 
-      it "should set the comment prefix on the yielded hunks" do
-        collect_hunks[0].comment_prefix.should == ";;"
-        collect_hunks[1].comment_prefix.should == ";;"
-      end
     end
 
     def collect_hunks

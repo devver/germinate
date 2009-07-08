@@ -144,10 +144,14 @@ class Germinate::Reader
   def sample_control_line!(sample_name=current_section, options={})
     increment_section_count!
     self.sample_name = sample_name || automatic_section_name
+    librarian.set_code_attributes!(
+      sample_name,
+      :code_open_bracket  => options.fetch("brackets", []).first,
+      :code_close_bracket => options.fetch("brackets", []).last)
     code!
   end
 
-  def bracket_code_control_line!(open_bracket=:none, close_bracket=:none)
+  def bracket_code_control_line!(open_bracket=nil, close_bracket=nil)
     librarian.code_open_bracket = open_bracket
     librarian.code_close_bracket = close_bracket
   end
