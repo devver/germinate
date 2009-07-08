@@ -3,6 +3,7 @@
 
 # :TEXT:
 # Hello, world!
+# :CUT:
 
 def ignore_me
 end

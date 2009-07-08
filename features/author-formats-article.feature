@@ -13,4 +13,20 @@ Feature: author formats article
     | input_file      | output_file      |
     | article1.rb     | article1.html    |
     | article2.rb     | article2.html    |
-    | code_samples.rb | code_samples.txt |
+
+
+  Scenario: format text followed by code
+    Given an article with the contents:
+      """
+      # :TEXT:
+      # This is my article
+    
+      this is my code 
+      """
+    When I run the format command on the article
+    Then the output should be as follows:
+      """
+      This is my article
+  
+      this is my code
+      """

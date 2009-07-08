@@ -12,7 +12,10 @@ class Germinate::Reader
   attr_reader :current_section
   attr_reader :section_count
   
-  def_delegators :librarian, :comment_prefix, :comment_prefix=, :comment_prefix_known?
+  def_delegators :librarian, 
+                 :comment_prefix, 
+                 :comment_prefix=, 
+                 :comment_prefix_known?
   
   state :initial, :default => true do
     handle :add_line!, :first_line!
