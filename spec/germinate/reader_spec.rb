@@ -13,6 +13,30 @@ module Germinate
       @it.state.should == :initial
     end
 
+    it "should start out with a section count of 0" do
+      @it.section_count.should == 0
+    end
+
+    it "should start out with current section SECTION0" do
+      @it.current_section.should == "SECTION0"
+    end
+
+    context "when section count is incremented" do
+
+      before :each do
+        @it.increment_section_count!
+      end
+
+      it "should increment section count by one" do
+        @it.section_count.should == 1
+      end
+
+      it "should update current section" do
+        @it.current_section.should == "SECTION1"
+      end
+
+    end
+
     CONTROL_LINES = [
       # Line                  Comment  Args
       [":TEXT:\n",            nil,     []],
@@ -109,7 +133,7 @@ module Germinate
       it "should name following code lines after the section" do
         @librarian.should_receive(:add_code!).with("foo", "this is code")
         @it << "yadda yadda\n"
-        @it << ":CUT:\n"
+        @it << ":SAMPLE:\n"
         @it << "this is code"
       end
     end
@@ -125,7 +149,7 @@ module Germinate
       end
 
       it "should add following lines to a code sample" do
-        @librarian.should_receive(:add_code!).with("SECTION1", "this is code")
+        @librarian.should_receive(:add_code!).with("SECTION2", "this is code")
         @it << "this is code"
       end
     end

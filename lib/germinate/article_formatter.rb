@@ -1,5 +1,15 @@
+require 'ick'
+require 'fattr'
+
 class Germinate::ArticleFormatter
-  attr_accessor :comment_prefix
+  Ick::Returning.belongs_to self
+
+  fattr :comment_prefix
+  fattr :join_lines             => true
+  fattr :strip_blanks           => true
+  fattr :rstrip_newlines        => true
+  fattr :uncomment              => true
+  fattr :rstrip_lines           => true
 
   def initialize(output_stream=$stdout)
     @output_stream  = output_stream
@@ -19,14 +29,18 @@ class Germinate::ArticleFormatter
   end
 
   def format_text!(hunk, comment_prefix=nil)
-    hunk.strip.map{|l| uncomment(l, comment_prefix)}.each do |line|
-      @output_stream.puts(line.rstrip)
+    text_transforms.inject(hunk) do |hunk, transform|
+      transform.call(hunk)
+    end.each do |line|
+      @output_stream.puts(line)
     end
   end
 
   def format_code!(hunk, comment_prefix=nil)
-    hunk.strip.each do |line|
-      @output_stream.puts(line.rstrip)
+    code_transforms.inject(hunk) do |hunk, transform|
+      transform.call(hunk)
+    end.each do |line|
+      @output_stream.puts(line)
     end
   end
 
@@ -36,19 +50,21 @@ class Germinate::ArticleFormatter
     @first_output
   end
 
-  def uncomment(line, comment_prefix=nil)
-    if comment_prefix
-      if match_data = /^\s*(#{comment_prefix})+\s*/.match(line)
-        offset = match_data.begin(0)
-        length = match_data[0].length
-        line_copy = line.dup
-        line_copy[offset, length] = (" " * length)
-        line_copy
-      else
-        line
+  def text_transforms
+    returning([]) do |transforms|
+      transforms << Germinate::TextTransforms.strip_blanks if strip_blanks?
+      if uncomment?
+        transforms << Germinate::TextTransforms.uncomment(comment_prefix) 
       end
-    else
-      line
+      transforms << Germinate::TextTransforms.join_lines if join_lines?
+      transforms << Germinate::TextTransforms.rstrip_lines if rstrip_lines?
+    end
+  end
+
+  def code_transforms
+    returning([]) do |transforms|
+      transforms << Germinate::TextTransforms.strip_blanks if strip_blanks?
+      transforms << Germinate::TextTransforms.rstrip_lines if rstrip_lines?
     end
   end
 end

@@ -8,10 +8,7 @@ class Germinate::Hunk < ::Array
 
   # return a copy with leading and trailing whitespace lines removed
   def strip
-    result = dup
-    result.shift until result.first =~ /\S/ || result.empty?
-    result.pop until result.last =~ /\S/ || result.empty?
-    result
+    Germinate::TextTransforms.strip_blanks.call(self)
   end
 
   private

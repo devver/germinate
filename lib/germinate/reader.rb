@@ -64,6 +64,11 @@ class Germinate::Reader
     end
   end
 
+  def increment_section_count!
+    self.section_count = section_count.succ
+    self.current_section = automatic_section_name
+  end
+
   private
 
   attr_writer :current_section
@@ -89,10 +94,6 @@ class Germinate::Reader
 
   def add_code!(line)
     librarian.add_code!(current_section, line)
-  end
-
-  def increment_section_count!
-    self.section_count = section_count.succ
   end
 
   def handle_control_line!(line)
@@ -135,7 +136,7 @@ class Germinate::Reader
     code!
   end
 
-  def sample_control_line!(sample_name=nil, options={})
+  def sample_control_line!(sample_name=current_section, options={})
     increment_section_count!
     self.sample_name = sample_name || automatic_section_name
     code!

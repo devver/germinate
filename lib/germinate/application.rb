@@ -9,6 +9,7 @@ class Germinate::Application
     end
     editor    = Germinate::ArticleEditor.new(librarian)
     formatter = Germinate::ArticleFormatter.new(output)
+    formatter.comment_prefix = librarian.comment_prefix
     formatter.start!
     editor.each_hunk do |hunk|
       formatter.format!(hunk)
