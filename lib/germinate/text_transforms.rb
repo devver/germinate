@@ -1,6 +1,7 @@
 # A library of text transforms.  Each public module method returns a callable
 # object which can be used to transform an array of lines.
 module Germinate::TextTransforms
+
   IDENTITY_TRANSFORM = lambda {|hunk| hunk}
   def self.join_lines
     lambda { |hunk|
@@ -65,6 +66,16 @@ module Germinate::TextTransforms
   def self.rstrip_lines
     lambda { |hunk|
       hunk.map{|line| line.to_s.rstrip}
+    }
+  end
+
+  def self.bracket(open_bracket, close_bracket)
+    lambda { |hunk|
+      result = []
+      result << open_bracket unless open_bracket == :none
+      result += Array(hunk)
+      result << close_bracket unless close_bracket == :none
+      result
     }
   end
 end

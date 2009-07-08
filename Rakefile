@@ -19,8 +19,8 @@ require 'germinate'
 task :default => 'spec:run'
 
 PROJ.name = 'germinate'
-PROJ.authors = 'FIXME (who is writing this software)'
-PROJ.email = 'FIXME (your e-mail)'
+PROJ.authors = 'Avdi Grimm'
+PROJ.email = 'avdi@avdi.org'
 PROJ.url = 'FIXME (project homepage)'
 PROJ.version = Germinate::VERSION
 PROJ.rubyforge.name = 'germinate'

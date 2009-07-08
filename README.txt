@@ -1,10 +1,10 @@
 germinate
-    by FIXME (your name)
+    by Avdi Grimm
     FIXME (url)
 
 == DESCRIPTION:
 
-FIXME (describe your package)
+Germinate takes the tedium out of writing technical articles.
 
 == FEATURES/PROBLEMS:
 

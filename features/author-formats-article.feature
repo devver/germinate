@@ -30,3 +30,22 @@ Feature: author formats article
   
       this is my code
       """
+
+  Scenario: format code with bracketing
+    Given an article with the contents:
+      """
+      # :BRACKET_CODE: "<pre>", "</pre>"
+      # :TEXT:
+      # This is my article
+    
+      this is my code 
+      """
+    When I run the format command on the article
+    Then the output should be as follows:
+      """
+      This is my article
+  
+      <pre>
+      this is my code
+      </pre>
+      """

@@ -132,5 +132,22 @@ module Germinate
       end
     end
 
+    context "given code brackets and some code to format" do
+      before :each do
+        @it.code_open_bracket = "<<<"
+        @it.code_close_bracket = ">>>"
+      end
+
+      it "should wrap the code in brackets" do
+        @transform = stub("Bracketer")
+        TextTransforms.should_receive(:bracket).
+          with("<<<", ">>>").
+          and_return(@transform)
+        @transform.should_receive(:call).with(["line 1"]).and_return([])
+        @it.format_code!(Hunk.new(["line 1"]))
+      end
+    end
+
   end
+
 end

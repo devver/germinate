@@ -5,7 +5,7 @@ class Germinate::Reader
   include AlterEgo
   extend Forwardable
 
-  CONTROL_KEYWORDS = %w[TEXT SAMPLE CUT END INSERT]
+  CONTROL_KEYWORDS = %w[TEXT SAMPLE CUT END INSERT BRACKET_CODE]
   CONTROL_PATTERN  = /^\s*(\S+)?\s*:(#{CONTROL_KEYWORDS.join('|')}):\s*(.*)?\s*$/
 
   attr_reader :librarian
@@ -111,6 +111,7 @@ class Germinate::Reader
       when "CUT"    then cut_control_line!(*arguments)
       when "END"    then end_control_line!(*arguments)
       when "INSERT" then insert_control_line!(*arguments)
+      when "BRACKET_CODE" then bracket_code_control_line!(*arguments)
       else raise "Unknown keyword '#{keyword}'"
       end
       librarian.add_control!(line)
@@ -140,6 +141,11 @@ class Germinate::Reader
     increment_section_count!
     self.sample_name = sample_name || automatic_section_name
     code!
+  end
+
+  def bracket_code_control_line!(open_bracket=:none, close_bracket=:none)
+    librarian.code_open_bracket = open_bracket
+    librarian.code_close_bracket = close_bracket
   end
 
   def sample_name=(name)

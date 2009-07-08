@@ -1,10 +1,11 @@
 require 'ick'
 require 'fattr'
+require File.expand_path("shared_style_attributes", File.dirname(__FILE__))
 
 class Germinate::ArticleFormatter
   Ick::Returning.belongs_to self
+  include Germinate::SharedStyleAttributes
 
-  fattr :comment_prefix
   fattr :join_lines             => true
   fattr :strip_blanks           => true
   fattr :rstrip_newlines        => true
@@ -65,6 +66,8 @@ class Germinate::ArticleFormatter
     returning([]) do |transforms|
       transforms << Germinate::TextTransforms.strip_blanks if strip_blanks?
       transforms << Germinate::TextTransforms.rstrip_lines if rstrip_lines?
+      transforms << 
+        Germinate::TextTransforms.bracket(code_open_bracket, code_close_bracket)
     end
   end
 end

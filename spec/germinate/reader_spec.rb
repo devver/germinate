@@ -44,7 +44,8 @@ module Germinate
       ["  ; :TEXT: foo\n",    ";",     ["foo"]],
       ["//:SAMPLE:\n",        "//",    []],
       ["$>:END: ",            "$>",    []],
-      [":SAMPLE: bar, { a: 1, b: 2 }", nil, ["bar", {"a"=>1, "b"=>2}]]
+      [":SAMPLE: bar, { a: 1, b: 2 }", nil, ["bar", {"a"=>1, "b"=>2}]],
+      [':BRACKET_CODE:',      nil,     []]
     ]
 
     CONTROL_LINES.each do |(line, comment, args)|
@@ -66,6 +67,19 @@ module Germinate
           @it << line
         end
       end
+    end
+
+    context "given a BRACKET_CODE control line" do
+      before :each do 
+        @line = ':BRACKET_CODE: "<<<", ">>>"'
+      end
+
+      it "should store the brackets" do
+        @librarian.should_receive(:code_open_bracket=).with("<<<")
+        @librarian.should_receive(:code_close_bracket=).with(">>>")
+        @it << @line
+      end
+
     end
 
     context "before the first line of text" do

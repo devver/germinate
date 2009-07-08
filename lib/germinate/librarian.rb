@@ -1,7 +1,10 @@
 require 'orderedhash'
+require 'fattr'
+require File.expand_path("shared_style_attributes", File.dirname(__FILE__))
 
 class Germinate::Librarian
-  attr_accessor :comment_prefix
+  include Germinate::SharedStyleAttributes
+
   attr_reader   :lines
   attr_reader   :text_lines
   attr_reader   :code_lines

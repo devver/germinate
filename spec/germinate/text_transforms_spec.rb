@@ -79,5 +79,15 @@ module Germinate
         @it.call(["foo\n", "\n", "", "\tbar\t \n "]).should == ["foo", "", "", "\tbar"]
       end
     end
+
+    describe "bracket" do
+      before :each do
+        @it = TextTransforms.bracket("[", "]")
+      end
+
+      it "should bracket lines with the given brackets" do
+        @it.call(["line 1", "line 2"]).should == ["[", "line 1", "line 2", "]"]
+      end
+    end
   end
 end

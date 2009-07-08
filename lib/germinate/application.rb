@@ -9,7 +9,11 @@ class Germinate::Application
     end
     editor    = Germinate::ArticleEditor.new(librarian)
     formatter = Germinate::ArticleFormatter.new(output)
-    formatter.comment_prefix = librarian.comment_prefix
+
+    %w[comment_prefix code_open_bracket code_close_bracket].each do 
+      |style_attribute|
+      formatter.send("#{style_attribute}=", librarian.send(style_attribute))
+    end
     formatter.start!
     editor.each_hunk do |hunk|
       formatter.format!(hunk)

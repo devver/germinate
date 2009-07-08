@@ -13,6 +13,11 @@ module Germinate
         @it.comment_prefix.should == nil
         @it.comment_prefix_known?.should be_false
       end
+
+      it "should not have code brackets" do
+        @it.code_open_bracket.should == :none
+        @it.code_close_bracket.should == :none
+      end
     end
 
     context "given a comment prefix" do
@@ -26,6 +31,21 @@ module Germinate
 
       it "should know it has a comment prefix" do
         @it.comment_prefix_known?.should be_true
+      end
+    end
+
+    context "given code brackets" do
+      before :each do
+        @it.code_open_bracket = "{"
+        @it.code_close_bracket = "}"
+      end
+      
+      it "should remember the open bracket" do
+        @it.code_open_bracket.should == "{"
+      end
+
+      it "should remember the close bracket" do
+        @it.code_close_bracket.should == "}"
       end
     end
 
