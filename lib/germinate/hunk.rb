@@ -16,13 +16,6 @@ class Germinate::Hunk < ::Array
     end
   end
 
-  def initialize_copy(from)
-    super
-    Germinate::SharedStyleAttributes.fattrs.each do |key|
-      send(key, from.send(key))
-    end
-  end
-
   # return a copy with leading and trailing whitespace lines removed
   def strip
     Germinate::TextTransforms.strip_blanks.call(self)

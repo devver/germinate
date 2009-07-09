@@ -27,4 +27,6 @@ PROJ.rubyforge.name = 'germinate'
 
 PROJ.spec.opts << '--color'
 
+PROJ.ruby_opts = []
+
 # EOF

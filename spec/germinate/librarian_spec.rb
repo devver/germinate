@@ -217,6 +217,38 @@ module Germinate
         [ "@SECTION2:1",     ["CODE 2"]                                        ],
         [ "@SECTION2:2..3",  ["CODE 2l2", "CODE 2l3"]                          ],
         [ "@SECTION2:2,2",   ["CODE 2l2", "CODE 2l3"]                          ],
+        [ "$CODE",           [          
+            "CODE 1",
+            "CODE 2",
+            "CODE 2l2",
+            "CODE 2l3",
+            "CODE 2l4", ]
+        ],
+        [ "$SOURCE",        [          
+            "FM 1",
+            "FM 2",
+            "CONTROL 1",
+            "TEXT 1",
+            "TEXT 2",
+            "CONTROL 2",
+            "CODE 1",
+            "CONTROL 3",
+            "TEXT 3",
+            "TEXT 4",
+            "CODE 2",
+            "CODE 2l2",
+            "CODE 2l3",
+            "CODE 2l4",
+          ]
+        ],
+        [ "$TEXT",          [          
+            "TEXT 1",
+            "TEXT 2",
+            "TEXT 3",
+            "TEXT 4"
+          ]
+        ],
+
       ]
 
       SELECTOR_EXAMPLES.each do |example|
