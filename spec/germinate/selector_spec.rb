@@ -30,6 +30,10 @@ module Germinate
           @it = Germinate::Selector.new(selector_string, "DEFAULT")
         end
 
+        it "should have string #{selector_string}" do
+          @it.string.should == selector_string
+        end
+
         it "should have type #{type.inspect}" do
           @it.selector_type.should == type 
         end

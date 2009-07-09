@@ -6,11 +6,14 @@ class Germinate::Selector
   attr_reader :end_offset
   attr_reader :length
   attr_reader :pipeline
+  attr_reader :default_key
 
   PATTERN = /([@$])?(\w+)?(:([^\s\|]+))?(\|(\w+))?/
   EXCERPT_PATTERN = %r{((\d+)|(/[^/]*/))(((\.\.\.?)|(,))((\d+)|(/[^/]*/)))?}
 
-  def initialize(string, default_section)
+  def initialize(string, default_key)
+    @string      = string
+    @default_key = default_key
     match_data = case string
                  when "", nil then {}
                  else PATTERN.match(string)
@@ -22,7 +25,7 @@ class Germinate::Selector
       when "@", nil then :code
       else raise "Unknown selector type '#{match_data[1]}'"
       end
-    @key = match_data[2] || default_section
+    @key = match_data[2] || default_key
     if match_data[3]
       parse_excerpt(match_data[3])
     else

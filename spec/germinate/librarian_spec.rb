@@ -195,6 +195,7 @@ module Germinate
       end
 
       it "should be able to retrieve lines using a selector" do
+        @it[Selector.new("@SECTION1", nil)].should == ["CODE 1"]
         @it["@SECTION1"].should == ["CODE 1"]
       end
     end

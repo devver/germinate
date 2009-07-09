@@ -89,7 +89,11 @@ class Germinate::Librarian
   end
 
   def [](selector)
-    sample(selector[(1..-1)])
+    selector = case selector
+               when Germinate::Selector then selector
+               else Germinate::Selector.new(selector, "SECTION0")
+               end
+    sample(selector.key)
   end
 
   def section_names

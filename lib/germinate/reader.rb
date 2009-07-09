@@ -158,7 +158,9 @@ class Germinate::Reader
   end
 
   def insert_control_line!(selector=nil)
-    librarian.add_insertion!(current_section, selector)
+    librarian.add_insertion!(
+      current_section, 
+      Germinate::Selector.new(selector, current_section))
   end
 
   def sample_name=(name)

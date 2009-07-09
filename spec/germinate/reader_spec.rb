@@ -262,7 +262,16 @@ module Germinate
       end
       
       it "should add an insertion to the current section" do
-        @librarian.should_receive(:add_insertion!).with("mysection", "foo")
+        @librarian.should_receive(:add_insertion!).with("mysection", anything)
+        @it << @line
+      end
+
+      it "should pass a selector object to the librarian" do
+        @librarian.should_receive(:add_insertion!) do |section, selector|
+          selector.should be_a_kind_of(Selector)
+          selector.string.should == "foo"
+          selector.default_key.should == "mysection"
+        end
         @it << @line
       end
     end
