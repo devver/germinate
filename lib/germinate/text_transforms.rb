@@ -31,7 +31,7 @@ module Germinate::TextTransforms
     }
   end
 
-  def self.erase_comments(comment_prefix)
+  def self.erase_comments(comment_prefix="")
     lambda { |hunk|
       hunk.dup.map! do |line|
         if comment_prefix
@@ -51,7 +51,7 @@ module Germinate::TextTransforms
     }
   end
 
-  def self.uncomment(comment_prefix)
+  def self.uncomment(comment_prefix="")
     lambda { |hunk|
       hunk.dup.map! do |line|
         if comment_prefix
@@ -74,7 +74,7 @@ module Germinate::TextTransforms
       result = hunk.dup
       result.clear
       result << (open_bracket || hunk.code_open_bracket)
-      result += Array(hunk)
+      result.push(*Array(hunk))
       result << (close_bracket || hunk.code_close_bracket)
       result.compact!
       result

@@ -3,6 +3,18 @@ require File.expand_path(
 
 module Germinate
   describe TextTransforms do
+
+    Germinate::TextTransforms.methods(false).each do |transform|
+      describe "'#{transform}'" do
+        it "should preserve hunk attributes from input to output" do
+          @input = Hunk.new([], :comment_prefix => "foo")
+          @transform = Germinate::TextTransforms.send(transform)
+          @output = @transform.call(@input)
+          @output.comment_prefix.should == @input.comment_prefix
+        end
+      end
+    end
+
     describe "join_lines" do
       before :each do
         @it = TextTransforms.join_lines
