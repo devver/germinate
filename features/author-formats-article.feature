@@ -97,8 +97,9 @@ Feature: author formats article
     Then the output should look like "<output_file>"
 
   Scenarios:
-    | input_file      | output_file      |
-    | hello.rb        | hello.txt        |
-    | wrapping.rb     | wrapping.txt     |
+    | input_file        | output_file        |
+    | hello.rb          | hello.txt          |
+    | wrapping.rb       | wrapping.txt       |
+    | sample_offsets.rb | sample_offsets.txt |
 
 

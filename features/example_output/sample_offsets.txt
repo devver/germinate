@@ -1,0 +1,18 @@
+We can specify a starting offset:
+a_line_2 = 2
+a_line_3 = 3
+a_line_4 = 4
+
+And an ending offset
+a_line_2 = 2
+a_line_3 = 3
+
+Ending offset can be exclusive
+a_line_1 = 1
+a_line_2 = 2
+
+We can specify offset and count instead
+a_line_2 = 2
+a_line_3 = 3
+a_line_4 = 4
+
