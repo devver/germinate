@@ -23,12 +23,14 @@ module Germinate
     Germinate::SharedStyleAttributes.fattrs.each do |attribute|
       it "should pass the #{attribute} attribute on to text hunks" do
         @it.send(attribute, "#{attribute}_test")
+        @it.add_text!("first", "hello")
         @it.section("first").send(attribute).should == "#{attribute}_test"
       end
 
       it "should pass the #{attribute} attribute on to code hunks" do
         @it.send(attribute, "#{attribute}_test")
-        @it.section("first").send(attribute).should == "#{attribute}_test"
+        @it.add_code!("first", "hello")
+        @it.sample("first").send(attribute).should == "#{attribute}_test"
       end
     end
 
@@ -73,6 +75,24 @@ module Germinate
       it "should create the sample (if needed) and assign the attributes" do
         @it.sample("sample1").code_open_bracket.should == "<<"
         @it.sample("sample1").code_close_bracket.should == ">>"
+      end
+    end
+
+    context "given an insertion in my_section with selector @my_selector" do
+      before :each do
+        @it.add_insertion!("my_section", "@my_selector")
+      end
+
+      it "should add an Insertion to the named section" do
+        @it.section("my_section").last.should be_a_kind_of(Insertion)
+      end
+
+      it "should give the insertion the selector @my_selector" do
+        @it.section("my_section").last.selector.to_s.should == "@my_selector"
+      end
+
+      it "should give the insertion a reference to the library" do
+        @it.section("my_section").last.library.should == @it
       end
     end
 
@@ -141,10 +161,6 @@ module Germinate
         ]
       end
 
-      it "should return an empty list for missing sections" do
-        @it.section("SECTION3").should == []
-      end
-
       it "should be able to retrieve code by sample name" do
         @it.sample("SECTION1").should == [
           "CODE 1"
@@ -152,10 +168,6 @@ module Germinate
         @it.sample("SECTION2").should == [
           "CODE 2",
         ]
-      end
-
-      it "should return an empty list for missing sections" do
-        @it.sample("SECTION3").should == []
       end
 
       it "should be able to return a list of section names" do
@@ -170,6 +182,20 @@ module Germinate
           "SECTION1",
           "SECTION2"
         ]
+      end
+
+      it "should be able to tell if a section exists" do
+        @it.should have_section("SECTION1")
+        @it.should_not have_section("SECTION5")
+      end
+
+      it "should be able to tell if a sample exists" do
+        @it.should have_sample("SECTION1")
+        @it.should_not have_sample("SECTION5")
+      end
+
+      it "should be able to retrieve lines using a selector" do
+        @it["@SECTION1"].should == ["CODE 1"]
       end
     end
   end

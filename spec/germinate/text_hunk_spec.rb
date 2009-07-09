@@ -3,13 +3,15 @@ require File.expand_path(
 
 module Germinate
   describe TextHunk do
-    before :each do
-      @comment_prefix = ">>"
-      @it = TextHunk.new(["foo", "bar"], :comment_prefix => @comment_prefix)
-    end
-
     context "when visited by a formatter" do
       before :each do
+        @comment_prefix = ">>"
+        contents = [
+          "foo",
+          "bar"
+        ]
+        @it = TextHunk.new(contents, 
+          :comment_prefix => @comment_prefix)
         @formatter = stub("Formatter")
       end
 
@@ -23,6 +25,29 @@ module Germinate
         @it.format_with(@formatter)
       end
 
+    end
+
+    describe "with a nested hunk" do
+      before :each do
+        @comment_prefix = ">>"
+        @formatter = stub("Formatter")
+        @nested_hunk = stub("Nested Hunk", :empty? => false)
+        contents = [
+          "foo",
+          "bar",
+          @nested_hunk,
+          "baz"
+        ]
+        @it = TextHunk.new(contents, 
+          :comment_prefix => @comment_prefix)
+      end
+
+      it "should pass formatter on to nested hunks" do
+        @formatter.should_receive(:format_text!).with(["foo", "bar"], ">>").ordered
+        @nested_hunk.should_receive(:format_with).with(@formatter).ordered
+        @formatter.should_receive(:format_text!).with(["baz"], ">>").ordered
+        @it.format_with(@formatter)
+      end
     end
   end
 end

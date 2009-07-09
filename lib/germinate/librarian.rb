@@ -47,9 +47,14 @@ class Germinate::Librarian
     @samples[sample] << line
   end
 
+  def add_insertion!(section, selector)
+    insertion = Germinate::Insertion.new(selector, self)
+    @sections[section] << insertion
+  end
+
   def set_code_attributes!(sample, attributes)
     attributes.each_pair do |key, value| 
-      @samples[sample].send(key, value)
+      @samples[sample].send(key, value) unless value.nil?
     end
   end
 
@@ -58,11 +63,33 @@ class Germinate::Librarian
   end
 
   def section(section_name)
+    unless has_section?(section_name)
+      raise IndexError, 
+            "No text section named '#{section_name}'.  "\
+            "Known sections: #{@sections.keys.join(', ')}"
+    end
     Array(@sections[section_name])
   end
 
+  def has_section?(section_name)
+    @sections.key?(section_name)
+  end
+
   def sample(sample_name)
+    unless has_sample?(sample_name)
+      raise IndexError,
+            "No code sample named '#{sample_name}'.  "\
+            "Known samples: #{@samples.keys.join(', ')}"
+    end
     Array(@samples[sample_name])
+  end
+
+  def has_sample?(sample_name)
+    @samples.key?(sample_name)
+  end
+
+  def [](selector)
+    sample(selector[(1..-1)])
   end
 
   def section_names

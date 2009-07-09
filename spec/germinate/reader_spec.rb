@@ -45,7 +45,8 @@ module Germinate
       ["//:SAMPLE:\n",        "//",    []],
       ["$>:END: ",            "$>",    []],
       [":SAMPLE: bar, { a: 1, b: 2 }", nil, ["bar", {"a"=>1, "b"=>2}]],
-      [':BRACKET_CODE:',      nil,     []]
+      [':BRACKET_CODE:',      nil,     []],
+      [':INSERT: @sel',       nil,     ["@sel"]]
     ]
 
     CONTROL_LINES.each do |(line, comment, args)|
@@ -251,6 +252,18 @@ module Germinate
         @librarian.should_receive(:add_code!).
           with(@section, "uncommented text\n")
         @it << "uncommented text\n"
+      end
+    end
+
+    context "given an insertion with an explicit selector" do
+      before :each do
+        @it << ":TEXT: mysection"
+        @line = ":INSERT: foo"
+      end
+      
+      it "should add an insertion to the current section" do
+        @librarian.should_receive(:add_insertion!).with("mysection", "foo")
+        @it << @line
       end
     end
 

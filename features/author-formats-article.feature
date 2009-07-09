@@ -4,17 +4,6 @@ Feature: author formats article
   I want to format my articles
   So that they can be published
 
-  Scenario Outline: format article
-    Given the article "<input_file>"
-    When I run the format command on the article
-    Then the output should look like "<output_file>"
-
-  Scenarios:
-    | input_file      | output_file      |
-    | article1.rb     | article1.html    |
-    | article2.rb     | article2.html    |
-
-
   Scenario: format text followed by code
     Given an article with the contents:
       """
@@ -69,3 +58,47 @@ Feature: author formats article
       this is my code
       [/code]
       """
+
+  Scenario: insert a named section
+    Given an article with the contents:
+      """
+      # :BRACKET_CODE: "<pre>", "</pre>"
+    
+      # :SAMPLE: sample1
+      code sample 1
+
+      # :SAMPLE: sample2
+      code sample 2
+
+      # :TEXT:
+      # Here is example 2:
+      # :INSERT: @sample2
+      #
+      # And here is example 1:
+      # :INSERT: @sample1
+      """
+    When I run the format command on the article
+    Then the output should be as follows:
+      """
+      Here is example 2:
+      <pre>
+      code sample 2
+      </pre>
+
+      And here is example 1:
+      <pre>
+      code sample 1
+      </pre>
+      """
+
+  Scenario Outline: more formatting examples
+    Given the article "<input_file>"
+    When I run the format command on the article
+    Then the output should look like "<output_file>"
+
+  Scenarios:
+    | input_file      | output_file      |
+    | hello.rb        | hello.txt        |
+    | wrapping.rb     | wrapping.txt     |
+
+

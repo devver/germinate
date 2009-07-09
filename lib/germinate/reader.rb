@@ -40,6 +40,7 @@ class Germinate::Reader
     handle :add_line!, :add_code!
 
     transition :to => :text, :on => :text!
+    transition :to => :code, :on => :code!
     transition :to => :finished, :on => :finish!
   end
   
@@ -154,6 +155,10 @@ class Germinate::Reader
   def bracket_code_control_line!(open_bracket=nil, close_bracket=nil)
     librarian.code_open_bracket = open_bracket
     librarian.code_close_bracket = close_bracket
+  end
+
+  def insert_control_line!(selector=nil)
+    librarian.add_insertion!(current_section, selector)
   end
 
   def sample_name=(name)

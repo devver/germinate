@@ -7,8 +7,10 @@ class Germinate::ArticleEditor
 
   def each_hunk(&block)
     librarian.section_names.each do |section_name|
-      yield librarian.section(section_name)
-      yield librarian.sample(section_name)
+      yield librarian.section(section_name).resolve_insertions
+      if librarian.has_sample?(section_name)
+        yield librarian.sample(section_name).resolve_insertions 
+      end
     end
   end
 

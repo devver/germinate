@@ -53,8 +53,7 @@ module Germinate
 
       it "should yield just the text" do
         collect_hunks.should == [
-          ["this is the text", "text line 2"],
-          []
+          ["this is the text", "text line 2"]
         ]
       end
     end
@@ -66,6 +65,25 @@ module Germinate
         @librarian.add_code!("SECTION1", "this is the code")
       end
 
+    end
+
+    context "when iterating through hunks" do
+      before :each do
+        @resolved  = stub("Resolved Section")
+        @section   = stub("Unresolved Section", 
+          :resolve_insertions => @resolved)
+        @librarian = stub("Librarian", 
+          :section_names => ["section1"],
+          :section       => @section,
+          :sample        => @section,
+          :has_sample?   => true)
+        @it = ArticleEditor.new(@librarian)
+      end
+
+      it "should resolve hunks before yielding them" do
+        collect_hunks[0].should equal(@resolved)
+        collect_hunks[1].should equal(@resolved)
+      end
     end
 
     def collect_hunks
