@@ -101,5 +101,6 @@ Feature: author formats article
     | hello.rb          | hello.txt          |
     | wrapping.rb       | wrapping.txt       |
     | sample_offsets.rb | sample_offsets.txt |
+    | specials.rb       | specials.txt       |
 
 

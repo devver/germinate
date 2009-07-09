@@ -13,4 +13,10 @@ module Germinate::SharedStyleAttributes
       attributes
     }
   end
+
+  def copy_shared_style_attrubutes_from(other)
+    other.shared_style_attributes.each_pair do |key, value|
+      self.send(key, value) unless other.send(key).nil?
+    end
+  end
 end

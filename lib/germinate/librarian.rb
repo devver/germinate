@@ -98,17 +98,16 @@ class Germinate::Librarian
       when :code then sample(selector.key)
       when :special then 
         case selector.key
-        when "SOURCE" then lines
-        when "CODE"   then code_lines
-        when "TEXT"   then text_lines
+        when "SOURCE" then Germinate::CodeHunk.new(lines, self)
+        when "CODE"   then Germinate::CodeHunk.new(code_lines, self)
+        when "TEXT"   then Germinate::CodeHunk.new(text_lines, self)
         else raise "Unknown special section '$#{selector.key}'"
         end
       else
         raise Exception, 
               "Unknown selector type #{selector.selector_type.inspect}"
       end
-    sample.dup.replace(
-      sample[selector.start_offset_for_slice..selector.end_offset_for_slice])
+    sample[selector.start_offset_for_slice..selector.end_offset_for_slice]
   end
 
   def section_names

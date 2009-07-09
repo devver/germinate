@@ -8,6 +8,30 @@ module Germinate
         @it = Germinate::Hunk.new([], attribute => "test")
         @it.send(attribute).should == "test"
       end
+
+      it "should pass the #{attribute} attribute on to duplicates" do
+        @it = Germinate::Hunk.new([], attribute => "test")
+        @it.dup.send(attribute).should == "test"
+      end
+
+      it "should pass the #{attribute} attribute on to clones" do
+        @it = Germinate::Hunk.new([], attribute => "test")
+        @it.clone.send(attribute).should == "test"
+      end
+
+      it "should pass the #{attribute} attribute on to slices" do
+        @it = Germinate::Hunk.new([], attribute => "test")
+        @it[0..-1].send(attribute).should == "test"
+        @it.slice(0..-1).send(attribute).should == "test"
+      end
+
+      it "should copy #{attribute} from given template" do
+        @template = Object.new
+        @template.extend SharedStyleAttributes
+        @template.send(attribute, "test")
+        @it = Germinate::Hunk.new([], @template)
+        @it.send(attribute).should == "test"
+      end
     end
   end
 

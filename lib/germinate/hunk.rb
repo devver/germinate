@@ -9,10 +9,14 @@ class Germinate::Hunk < ::Array
   include Germinate::SharedStyleAttributes
   Ick::Returning.belongs_to(self)
 
-  def initialize(contents=[], attributes = {})
+  def initialize(contents=[], template = {})
     super(contents)
-    attributes.each_pair do |key, value|
-      send(key, value)
+    if Germinate::SharedStyleAttributes === template
+      copy_shared_style_attrubutes_from(template)
+    else
+      template.each_pair do |key, value|
+        send(key, value)
+      end
     end
   end
 
@@ -48,6 +52,18 @@ class Germinate::Hunk < ::Array
       attrs
     }
     "#{self.class}:#{super}:#{attrs.inspect}:#{object_id}"
+  end
+
+  def [](*args)
+    returning(super) do |slice|
+      slice.copy_shared_style_attrubutes_from(self)
+    end
+  end
+
+  def slice(*args)
+    returning(super) do |slice|
+      slice.copy_shared_style_attrubutes_from(self)
+    end
   end
 
   private

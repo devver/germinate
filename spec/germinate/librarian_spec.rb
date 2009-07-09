@@ -1,3 +1,6 @@
+require 'rubygems'
+require 'arrayfields'
+
 require File.expand_path(
     File.join(File.dirname(__FILE__), %w[.. .. lib germinate]))
 
@@ -212,17 +215,17 @@ module Germinate
       end
 
       SELECTOR_EXAMPLES = [
-        # Selector           Expected Excerpt
-        [ "@SECTION1",       ["CODE 1"]                                        ],
-        [ "@SECTION2:1",     ["CODE 2"]                                        ],
-        [ "@SECTION2:2..3",  ["CODE 2l2", "CODE 2l3"]                          ],
-        [ "@SECTION2:2,2",   ["CODE 2l2", "CODE 2l3"]                          ],
+        # Selector           Expected Excerpt                   Expected Type
+        [ "@SECTION1",       ["CODE 1"],                        CodeHunk ],
+        [ "@SECTION2:1",     ["CODE 2"],                        CodeHunk ],
+        [ "@SECTION2:2..3",  ["CODE 2l2", "CODE 2l3"],          CodeHunk ],
+        [ "@SECTION2:2,2",   ["CODE 2l2", "CODE 2l3"],          CodeHunk ],
         [ "$CODE",           [          
             "CODE 1",
             "CODE 2",
             "CODE 2l2",
             "CODE 2l3",
-            "CODE 2l4", ]
+            "CODE 2l4", ],                                      CodeHunk 
         ],
         [ "$SOURCE",        [          
             "FM 1",
@@ -239,21 +242,26 @@ module Germinate
             "CODE 2l2",
             "CODE 2l3",
             "CODE 2l4",
-          ]
+          ],                                                    CodeHunk
         ],
         [ "$TEXT",          [          
             "TEXT 1",
             "TEXT 2",
             "TEXT 3",
             "TEXT 4"
-          ]
+          ],                                                    CodeHunk
         ],
 
       ]
 
       SELECTOR_EXAMPLES.each do |example|
-        it "should be able to locate #{example[0]}" do
-          @it[example[0]].should == example[1]
+        example.fields = [:selector, :hunk, :type]
+        it "should be able to locate #{example[:selector]}" do
+          @it[example[:selector]].should == example[:hunk]
+        end
+
+        it "should return #{example[:selector]} as #{example[:type]}" do
+          @it[example[:selector]].should be_a_kind_of(example[:type])
         end
       end
     end
