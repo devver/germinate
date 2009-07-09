@@ -109,6 +109,9 @@ module Germinate
         @it.add_text!("SECTION2", "TEXT 3")
         @it.add_text!("SECTION2", "TEXT 4")
         @it.add_code!("SECTION2", "CODE 2")
+        @it.add_code!("SECTION2", "CODE 2l2")
+        @it.add_code!("SECTION2", "CODE 2l3")
+        @it.add_code!("SECTION2", "CODE 2l4")
       end
 
       it "should be able to retrieve all the lines in order" do
@@ -124,6 +127,9 @@ module Germinate
           "TEXT 3",
           "TEXT 4",
           "CODE 2",
+          "CODE 2l2",
+          "CODE 2l3",
+          "CODE 2l4",
         ]
       end
 
@@ -140,6 +146,9 @@ module Germinate
         @it.code_lines.should == [
           "CODE 1",
           "CODE 2",
+          "CODE 2l2",
+          "CODE 2l3",
+          "CODE 2l4",
         ]
       end
 
@@ -167,6 +176,9 @@ module Germinate
         ]
         @it.sample("SECTION2").should == [
           "CODE 2",
+          "CODE 2l2",
+          "CODE 2l3",
+          "CODE 2l4",
         ]
       end
 
@@ -197,6 +209,20 @@ module Germinate
       it "should be able to retrieve lines using a selector" do
         @it[Selector.new("@SECTION1", nil)].should == ["CODE 1"]
         @it["@SECTION1"].should == ["CODE 1"]
+      end
+
+      SELECTOR_EXAMPLES = [
+        # Selector           Expected Excerpt
+        [ "@SECTION1",       ["CODE 1"]                                        ],
+        [ "@SECTION2:1",     ["CODE 2"]                                        ],
+        [ "@SECTION2:2..3",  ["CODE 2l2", "CODE 2l3"]                          ],
+        [ "@SECTION2:2,2",   ["CODE 2l2", "CODE 2l3"]                          ],
+      ]
+
+      SELECTOR_EXAMPLES.each do |example|
+        it "should be able to locate #{example[0]}" do
+          @it[example[0]].should == example[1]
+        end
       end
     end
   end

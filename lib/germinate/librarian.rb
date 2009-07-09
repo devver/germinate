@@ -93,7 +93,9 @@ class Germinate::Librarian
                when Germinate::Selector then selector
                else Germinate::Selector.new(selector, "SECTION0")
                end
-    sample(selector.key)
+    sample = sample(selector.key)
+    sample.dup.replace(
+      sample[selector.start_offset_for_slice..selector.end_offset_for_slice])
   end
 
   def section_names

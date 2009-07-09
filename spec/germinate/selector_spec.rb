@@ -6,9 +6,11 @@ module Germinate
     EXAMPLE_SELECTORS = [
       # selector       type      key        start end length pipeline
       [ "@A",          :code,    "A",       1,    -1, nil,   nil     ],
+      [ "@A:1",        :code,    "A",       1,     1,   1,   nil     ],
       [ "",            :code,    "DEFAULT", 1,    -1, nil,   nil     ],
       [ nil,           :code,    "DEFAULT", 1,    -1, nil,   nil     ],
       [ ":2..4",       :code,    "DEFAULT", 2,     4,   3,   nil     ],
+      [ ":2...4",      :code,    "DEFAULT", 2,     3,   2,   nil     ],
       [ "@B:2,5",      :code,    "B",       2,     6,   5,   nil     ],
       [ "@B:/z/,6",    :code,    "B",       /z/, nil,   6,   nil     ],
       [ "@_:/z/../x/", :code,    "_",       /z/, /x/, nil,   nil     ],

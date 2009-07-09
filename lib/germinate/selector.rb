@@ -36,6 +36,14 @@ class Germinate::Selector
     @pipeline = match_data[6]
   end
 
+  def start_offset_for_slice
+    offset_for_slice(start_offset)
+  end
+
+  def end_offset_for_slice
+    offset_for_slice(end_offset)
+  end
+
   private
 
   def parse_excerpt(excerpt)
@@ -66,12 +74,18 @@ class Germinate::Selector
     elsif regexp_end_offset
       @end_offset = Regexp.new(regexp_end_offset[1..-2])
     else
-      @end_offset = -1
+      @end_offset = @start_offset
+      @length     = 1
     end
 
     case op
     when :inclusive
       if integer_offsets?
+        @length = @end_offset - (@start_offset-1)
+      end
+    when :exclusive
+      if integer_offsets?
+        @end_offset -= 1
         @length = @end_offset - (@start_offset-1)
       end
     when :length
@@ -87,5 +101,13 @@ class Germinate::Selector
 
   def integer_offsets?
     Integer === @start_offset && Integer === @end_offset
+  end
+
+  def offset_for_slice(offset)
+    if offset < 1
+      offset
+    else
+      offset - 1
+    end
   end
 end
