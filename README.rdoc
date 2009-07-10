@@ -21,7 +21,7 @@ Germinate is a tool for writing about code.
 
 == REQUIREMENTS:
 
-# main
+* main
 * fattr
 * ick
 * orderedhash
