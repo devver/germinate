@@ -29,6 +29,7 @@ PROJ.spec.opts << '--color'
 
 PROJ.ruby_opts = []
 
+PROJ.readme_file = "README.rdoc"
 PROJ.rdoc.main = "README.rdoc"
 
 depend_on "ick",         "~> 0.3.0"
