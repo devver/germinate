@@ -104,5 +104,5 @@ Feature: author formats article
     | specials.rb       | specials.txt       |
     | regexen.rb        | regexen.txt        |
     | pipelines.txt     | pipelines.out      |
-
+    | escaping.txt      | escaping.out       |
 

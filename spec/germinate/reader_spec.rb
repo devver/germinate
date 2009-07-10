@@ -119,6 +119,13 @@ module Germinate
         @librarian.should_receive(:add_text!).with("SECTION1", "blah blah blah")
         @it << "blah blah blah"
       end
+
+      context "given an escaped directive" do
+        it "should add the directive line as text" do
+          @librarian.should_receive(:add_text!).with("SECTION1", ":TEXT: abc")
+          @it << "\\:TEXT: abc"
+        end
+      end
     end
 
     context "after two anonymous :TEXT: sections" do
@@ -203,6 +210,13 @@ module Germinate
 
         @it << "line 1"
         @it << "line 2"
+      end
+
+      context "given an escaped directive" do
+        it "should add the directive line as code" do
+          @librarian.should_receive(:add_code!).with("foobar", " # :TEXT: abc")
+          @it << " # \\:TEXT: abc"
+        end
       end
     end
 

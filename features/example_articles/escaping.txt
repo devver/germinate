@@ -1,0 +1,12 @@
+# What if you want to write about Germinate in Germinate?  Escaping is the key.
+
+# :TEXT:
+# Here are some Germinate directives
+# \:TEXT:
+# \:SAMPLE:
+# \:INSERT:
+# You get the idea.
+
+# It works in code too:
+# :SAMPLE:
+# \:PROCESS: foo, bar

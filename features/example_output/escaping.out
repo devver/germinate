@@ -1,0 +1,4 @@
+Here are some Germinate directives :TEXT: :SAMPLE: :INSERT: You get the idea.
+
+It works in code too:
+# :PROCESS: foo, bar
