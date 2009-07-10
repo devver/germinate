@@ -1,0 +1,23 @@
+Should have square brackets
+[
+def main
+  hello
+end
+]
+
+Should have curly brackets
+{
+def hello
+  puts "hello"
+end
+}
+
+Should have curly brackets
+{
+  puts "hello"
+}
+
+Should have angle brackets
+<
+  puts "hello"
+>
