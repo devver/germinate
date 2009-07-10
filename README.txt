@@ -1,32 +1,42 @@
 germinate
     by Avdi Grimm
-    FIXME (url)
+    http://github.com/devver/germinate/
 
 == DESCRIPTION:
 
-Germinate takes the tedium out of writing technical articles.
+Germinate is a tool for writing about code.
 
 == FEATURES/PROBLEMS:
 
-* FIXME (list of features or problems)
+* The source code is the article
+* Language and markup agnostic
+* Advanced selector syntax for excerpting code
+* Define arbitrary command pipelines to preprocess excerpts
+* Introspection commands make it easy to try things out
+* Fully tested
 
 == SYNOPSIS:
 
-  FIXME (code sample of usage)
+  germ format my_article.rb > my_article.html
 
 == REQUIREMENTS:
 
-* FIXME (list of requirements)
+# main
+* fattr
+* ick
+* orderedhash
+* arrayfields
+* alter-ego
 
 == INSTALL:
 
-* FIXME (sudo gem install, anything else)
+  gem install --source http://gems.rubyforge.org devver-germinate
 
 == LICENSE:
 
 (The MIT License)
 
-Copyright (c) 2008 FIXME (different license?)
+Copyright (c) 2008
 
 Permission is hereby granted, free of charge, to any person obtaining
 a copy of this software and associated documentation files (the
