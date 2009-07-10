@@ -29,11 +29,13 @@ PROJ.spec.opts << '--color'
 
 PROJ.ruby_opts = []
 
-depend_on "ick",   "~> 0.3.0"
-depend_on "fattr", "~> 1.0.3"
+PROJ.rdoc.main = "README.rdoc"
+
+depend_on "ick",         "~> 0.3.0"
+depend_on "fattr",       "~> 1.0.3"
 depend_on "arrayfields", "~> 4.7.3"
 depend_on "orderedhash", "~> 0.0.6"
-depend_on "alter-ego", "~> 1.0.0"
-depend_on "main",      "~> 2.8.3"
+depend_on "alter-ego",   "~> 1.0.0"
+depend_on "main",        "~> 2.8.3"
 
 # EOF

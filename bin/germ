@@ -8,20 +8,40 @@ require 'main'
 Main do
   description <<-END
     Germinate - A tool for writing about code.
+
+    With Germinate, your source code is also your article text.  Special
+    directives tell Germinate which parts to format as article text and
+    where to insert source code excerpts and program output.
+
+    To get started, execute:
+
+      germ generate > my_article.rb
+
+    to have Germinate generate a basic example article.
+
+    For more information, see the project homepage at 
+    http://github.com/devver/germinate/
+
+    Development of Germinate is graciously sponsored by Devver, purveyor 
+    of fine cloud-based services to busy Ruby developers.  If you like 
+    this tool please check them out at http://devver.net.
   END
 
   author "Avdi Grimm <avdi@avdi.org>"
 
   version Germinate::VERSION
 
-  argument :source do
-    arity 1
-    validate{|source| Pathname(source).readable?}
-    description "Source file"
+  def self.source_argument
+    argument :source do
+      arity 1
+      validate{|source| Pathname(source).readable?}
+      description "Source file"
+    end
   end
 
   mode :format do
     description "Format an article for publishing"
+    source_argument
     def run
       Germinate.logger = self
       with_source_file do |source|
@@ -33,6 +53,7 @@ Main do
 
   mode :list do
     description "List various article components"
+    source_argument
     COLLECTIONS = [:sections, :samples, :processes] 
     COLLECTIONS.each do |collection| 
       option collection do
@@ -55,6 +76,7 @@ Main do
 
   mode :show do
     description "Show details about various article components"
+    source_argument
     TYPES = [:section, :sample, :process] 
     TYPES.each do |type| 
       option type do
@@ -77,6 +99,7 @@ Main do
 
   mode :select do
     description "Test out a selector"
+    source_argument
     option(:selector, :s) do
       arity 1
       required
@@ -89,6 +112,16 @@ Main do
         application = Germinate::Application.new
         application.select(source, params[:selector].value, $stdout)
       end
+    end
+  end
+
+  mode :generate do
+    description "Generate a sample article"
+
+    def run
+      example = File.expand_path("../doc/examples/basic.rb", 
+                                 File.dirname(__FILE__))
+      stdout.write(File.read(example))
     end
   end
 

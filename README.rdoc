@@ -4,24 +4,91 @@ by Avdi Grimm
     
 http://github.com/devver/germinate/
 
-== DESCRIPTION:
+== DESCRIPTION
 
-Germinate is a tool for writing about code.
+Germinate is a tool for writing about code.  With Germinate, the source code IS
+the article.
 
-== FEATURES/PROBLEMS:
+For example, given the following source code:
 
-* The source code is the article
+  # #!/usr/bin/env ruby
+  # :BRACKET_CODE: <pre>, </pre>
+  # :PROCESS: ruby, "ruby %f"
+
+  # :SAMPLE: hello
+  def hello(who)
+    puts "Hello, #{who}"
+  end
+
+  hello("World")
+
+  # :TEXT:
+  # Check out my amazing program!  Here's the hello method:
+  # :INSERT: @hello:/def/../end/
+
+  # And here's the output:
+  # :INSERT: @hello|ruby
+
+When we run the `germ format` command the following output is generated:
+
+  Check out my amazing program!  Here's the hello method:
+  <pre>
+  def hello(who)
+    puts "Hello, #{who}"
+  end
+  </pre>
+  And here's the output:
+  <pre>
+  Hello, World
+  </pre>
+
+To get a better idea of how this works, please take a look at
+doc/examples/basic.rb, or run:
+
+  germ generate > basic.rb
+
+To generate an example article to play with.
+
+Germinate is particularly useful for writing articles, such as blog posts, which
+contain code excerpts.  Instead of forcing you to keep a source code file and an
+article document in sync throughout the editing process, the Germinate motto is
+"The source code IS the article".  Specially marked comment sections in your
+code file become the article text.  Wherever you need to reference the source
+code in the article, use insertion directives to tell Germinate what parts of
+the code to excerpt.  An advanced selector syntax enables you to be very
+specific about which lines of code you want to insert.
+
+If you also want to show the output of your code, Germinate has you covered.
+Special "process" directives enable you to define arbitrary commands which can
+be run on your code.  The output of the command then becomes the excerpt text.
+You can define an arbitrary number of processes and have different excerpts
+showing the same code as processed by different commands.  You can even string
+processes together into pipelines.
+
+Development of Germinate is graciously sponsored by Devver, purveyor of fine
+cloud-based services to busy Ruby developers.  If you like this tool please
+check them out at http://devver.net.
+
+== FEATURES
+
 * Language and markup agnostic
 * Advanced selector syntax for excerpting code
 * Define arbitrary command pipelines to preprocess excerpts
-* Introspection commands make it easy to try things out
+* Article text is reformatted to be more compatible with popular blogging 
+  engines, e.g. WordPress.
+* Introspection commands make it easy to experiment
 * Fully tested
 
-== SYNOPSIS:
+== FUTURE
+
+* Integration with blogging platforms, e.g. WordPress
+* Integration with Github's Gist
+
+== SYNOPSIS
 
   germ format my_article.rb > my_article.html
 
-== REQUIREMENTS:
+== REQUIREMENTS
 
 * main
 * fattr
