@@ -4,6 +4,11 @@ by Avdi Grimm
     
 http://github.com/devver/germinate/
 
+== SYNOPSIS
+
+  germ generate > my_article.rb
+  germ format my_article.rb > my_article.txt
+
 == DESCRIPTION
 
 Germinate is a tool for writing about code.  With Germinate, the source code IS
@@ -29,7 +34,7 @@ For example, given the following source code:
   # And here's the output:
   # :INSERT: @hello|ruby
 
-When we run the `germ format` command the following output is generated:
+When we run the <tt>germ format</tt> command the following output is generated:
 
   Check out my amazing program!  Here's the hello method:
   <pre>
@@ -43,7 +48,7 @@ When we run the `germ format` command the following output is generated:
   </pre>
 
 To get a better idea of how this works, please take a look at
-doc/examples/basic.rb, or run:
+doc/examples/basic.rb[link://doc/examples/basic.rb], or run:
 
   germ generate > basic.rb
 
@@ -83,10 +88,6 @@ check them out at http://devver.net.
 
 * Integration with blogging platforms, e.g. WordPress
 * Integration with Github's Gist
-
-== SYNOPSIS
-
-  germ format my_article.rb > my_article.html
 
 == REQUIREMENTS
 
