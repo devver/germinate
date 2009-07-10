@@ -11,13 +11,7 @@ class Germinate::Hunk < ::Array
 
   def initialize(contents=[], template = {})
     super(contents)
-    if Germinate::SharedStyleAttributes === template
-      copy_shared_style_attrubutes_from(template)
-    else
-      template.each_pair do |key, value|
-        send(key, value)
-      end
-    end
+    copy_shared_style_attrubutes_from(template)
   end
 
   # return a copy with leading and trailing whitespace lines removed

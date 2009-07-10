@@ -105,4 +105,5 @@ Feature: author formats article
     | regexen.rb        | regexen.txt        |
     | pipelines.txt     | pipelines.out      |
     | escaping.txt      | escaping.out       |
+    | bracketing.rb     | bracketing.out     |
 

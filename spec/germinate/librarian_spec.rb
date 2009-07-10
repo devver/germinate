@@ -83,7 +83,7 @@ module Germinate
 
     context "given an insertion in my_section with selector @my_selector" do
       before :each do
-        @it.add_insertion!("my_section", "@my_selector")
+        @it.add_insertion!("my_section", "@my_selector", { :comment_prefix => "@" })
       end
 
       it "should add an Insertion to the named section" do
@@ -96,6 +96,10 @@ module Germinate
 
       it "should give the insertion a reference to the library" do
         @it.section("my_section").last.library.should == @it
+      end
+
+      it "should apply any passed attributes to the insertion" do
+        @it.section("my_section").last.comment_prefix.should == "@"
       end
     end
 

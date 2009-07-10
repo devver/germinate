@@ -50,8 +50,8 @@ class Germinate::Librarian
     @samples[sample] << line
   end
 
-  def add_insertion!(section, selector)
-    insertion = Germinate::Insertion.new(selector, self)
+  def add_insertion!(section, selector, attributes)
+    insertion = Germinate::Insertion.new(selector, self, attributes)
     @sections[section] << insertion
   end
 

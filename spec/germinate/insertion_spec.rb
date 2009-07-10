@@ -4,10 +4,10 @@ require File.expand_path(
 module Germinate
   describe Insertion, "given a library and a selector" do
     before :each do
-      @hunk     = stub("Hunk")
+      @hunk     = stub("Hunk").as_null_object
       @library  = stub("Library", :[] => @hunk)
       @selector = stub("Selector")
-      @it = Germinate::Insertion.new(@selector, @library)
+      @it = Germinate::Insertion.new(@selector, @library, {})
     end
 
     it "should use the library to resolve itself" do

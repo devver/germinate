@@ -277,18 +277,36 @@ module Germinate
       end
       
       it "should add an insertion to the current section" do
-        @librarian.should_receive(:add_insertion!).with("mysection", anything)
+        @librarian.should_receive(:add_insertion!).
+          with("mysection", anything, anything)
         @it << @line
       end
 
       it "should pass a selector object to the librarian" do
-        @librarian.should_receive(:add_insertion!) do |section, selector|
+        @librarian.should_receive(:add_insertion!) do |section, selector, options|
           selector.should be_a_kind_of(Selector)
           selector.string.should == "foo"
           selector.default_key.should == "mysection"
         end
         @it << @line
       end
+    end
+
+    context "given an insertion with custom attributes" do
+      before :each do
+        @it << ":TEXT: mysection"
+        @line = ":INSERT: foo, { brackets: ['<<', '>>'] } "
+      end
+      
+      it "should pass the attributes on to the library" do
+        @librarian.should_receive(:add_insertion!).
+          with(anything, anything, {
+            :code_open_bracket => "<<", 
+            :code_close_bracket => ">>" 
+          })
+        @it << @line
+      end
+
     end
 
     context "given a process directive" do

@@ -4,7 +4,7 @@ require File.expand_path(
 module Germinate
   describe ImplicitInsertion do
     before :each do
-      @hunk     = stub("Hunk")
+      @hunk     = stub("Hunk").as_null_object
       @library  = stub("Library")
       @selector = stub("Selector")
       @it = Germinate::ImplicitInsertion.new(@selector, @library)

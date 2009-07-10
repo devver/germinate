@@ -153,8 +153,7 @@ class Germinate::Reader
     self.sample_name = sample_name || automatic_section_name
     librarian.set_code_attributes!(
       sample_name,
-      :code_open_bracket  => options.fetch("brackets", []).first,
-      :code_close_bracket => options.fetch("brackets", []).last)
+      options_to_style_attributes(options))
     code!
   end
 
@@ -163,10 +162,11 @@ class Germinate::Reader
     librarian.code_close_bracket = close_bracket
   end
 
-  def insert_control_line!(selector=nil)
+  def insert_control_line!(selector=nil, options={})
     librarian.add_insertion!(
       current_section, 
-      Germinate::Selector.new(selector, current_section))
+      Germinate::Selector.new(selector, current_section),
+      options_to_style_attributes(options))
   end
 
   def process_control_line!(process_name, command)
@@ -208,5 +208,14 @@ class Germinate::Reader
 
   def unescape(line)
     line.sub(/\\(:[A-Z0-9_]+:)/, '\1') 
+  end
+
+  def options_to_style_attributes(options)
+    returning({}) do |attributes|
+      if options.key?("brackets")
+        attributes[:code_open_bracket] = options.fetch("brackets").first
+        attributes[:code_close_bracket] = options.fetch("brackets").last
+      end
+    end
   end
 end
