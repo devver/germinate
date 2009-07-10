@@ -1,6 +1,8 @@
-germinate
-    by Avdi Grimm
-    http://github.com/devver/germinate/
+= germinate
+
+by Avdi Grimm
+    
+http://github.com/devver/germinate/
 
 == DESCRIPTION:
 
