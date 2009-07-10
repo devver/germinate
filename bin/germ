@@ -21,13 +21,79 @@ Main do
   end
 
   mode :format do
+    description "Format an article for publishing"
     def run
       Germinate.logger = self
-      File.open(params['source'].value) do |source|
+      with_source_file do |source|
         application = Germinate::Application.new
         application.format(source, $stdout, $stderr)
       end
     end
+  end
+
+  mode :list do
+    description "List various article components"
+    COLLECTIONS = [:sections, :samples, :processes] 
+    COLLECTIONS.each do |collection| 
+      option collection do
+        description "List all #{collection}"
+        cast :bool
+      end
+    end
+
+    def run
+      things_to_list = []
+      COLLECTIONS.each do |collection|
+        things_to_list << collection if params[collection].value
+      end
+      with_source_file do |source|
+        application = Germinate::Application.new
+        application.list(source, things_to_list, $stdout)
+      end
+    end
+  end
+
+  mode :show do
+    description "Show details about various article components"
+    TYPES = [:section, :sample, :process] 
+    TYPES.each do |type| 
+      option type do
+        description "Show details about a #{type}"
+        argument_required
+      end
+    end
+
+    def run
+      selection = TYPES.inject({}) {|sel, type|
+        sel[type] = params[type].values
+        sel
+      }
+      with_source_file do |source|
+        application = Germinate::Application.new
+        application.show(source, selection, $stdout)
+      end
+    end
+  end
+
+  mode :select do
+    description "Test out a selector"
+    option(:selector, :s) do
+      arity 1
+      required
+      argument_required
+      description "The selector to search for"
+    end
+
+    def run
+      with_source_file do |source|
+        application = Germinate::Application.new
+        application.select(source, params[:selector].value, $stdout)
+      end
+    end
+  end
+
+  def with_source_file(&block)
+    File.open(params['source'].value, &block)
   end
 end
 

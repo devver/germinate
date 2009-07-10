@@ -8,6 +8,10 @@ When /^I run the format command on the article$/ do
   run_germinate("format #{@filename}")
 end
 
+When /^I run the command "([^\"]*)" on the article$/ do |command|
+  run_germinate(command.sub(/^germ /,"") + " #{@filename}")
+end
+
 Then /^the output should look like "([^\"]*)"$/ do |output_file|
   example_path   = (EXAMPLE_OUTPUT + output_file)
   example_output = example_path.read
