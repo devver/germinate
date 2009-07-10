@@ -107,7 +107,15 @@ class Germinate::Librarian
         raise Exception, 
               "Unknown selector type #{selector.selector_type.inspect}"
       end
-    sample[selector.start_offset_for_slice..selector.end_offset_for_slice]
+    start_offset = start_offset(sample, selector)
+    end_offset   = end_offset(sample, selector, start_offset)
+    case selector.delimiter
+    when '..' then sample[start_offset..end_offset]
+    when '...' then sample[start_offset...end_offset]
+    when ','   then sample[start_offset, selector.length]
+    when nil   then sample.dup.replace([sample[start_offset]])
+    else raise "Don't understand delimiter #{selector.delimiter.inspect}"
+    end
   end
 
   def section_names
@@ -122,5 +130,26 @@ class Germinate::Librarian
 
   def add_line!(line)
     @lines << line
+  end
+
+  def start_offset(hunk, selector)
+    offset = selector.start_offset_for_slice
+    case offset
+    when Integer then offset
+    when Regexp  then hunk.index_matching(offset)
+    else 
+      raise "Don't know how to use #{offset.inspect} as an offset"
+    end
+  end
+
+  def end_offset(hunk, selector, start_offset)
+    offset = selector.end_offset_for_slice
+    case offset
+    when Integer, nil then offset
+    when Regexp then 
+      hunk.index_matching(offset, start_offset)
+    else
+      raise "Don't know how to use #{offset.inspect} as an offset"
+    end
   end
 end

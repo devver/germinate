@@ -56,14 +56,25 @@ class Germinate::Hunk < ::Array
 
   def [](*args)
     returning(super) do |slice|
-      slice.copy_shared_style_attrubutes_from(self)
+      if slice.kind_of?(Germinate::Hunk)
+        slice.copy_shared_style_attrubutes_from(self)
+      end
     end
   end
 
   def slice(*args)
     returning(super) do |slice|
-      slice.copy_shared_style_attrubutes_from(self)
+      if slice.kind_of?(Germinate::Hunk)
+        slice.copy_shared_style_attrubutes_from(self)
+      end
     end
+  end
+
+  def index_matching(pattern, start_index=0)
+    (start_index...(size)).each { |i|
+      return i if pattern === self[i]
+    }
+    nil
   end
 
   private
@@ -105,6 +116,7 @@ class Germinate::Hunk < ::Array
       duplicate.clear
     end
   end
+
 end
 
 class Germinate::TextHunk < Germinate::Hunk

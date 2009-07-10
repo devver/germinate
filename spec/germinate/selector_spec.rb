@@ -4,28 +4,29 @@ require File.expand_path(
 module Germinate
   describe Selector do
     EXAMPLE_SELECTORS = [
-      # selector       type      key        start end length pipeline
-      [ "@A",          :code,    "A",       1,    -1, nil,   nil     ],
-      [ "@A:1",        :code,    "A",       1,     1,   1,   nil     ],
-      [ "",            :code,    "DEFAULT", 1,    -1, nil,   nil     ],
-      [ nil,           :code,    "DEFAULT", 1,    -1, nil,   nil     ],
-      [ ":2..4",       :code,    "DEFAULT", 2,     4,   3,   nil     ],
-      [ ":2...4",      :code,    "DEFAULT", 2,     3,   2,   nil     ],
-      [ "@B:2,5",      :code,    "B",       2,     6,   5,   nil     ],
-      [ "@B:/z/,6",    :code,    "B",       /z/, nil,   6,   nil     ],
-      [ "@_:/z/../x/", :code,    "_",       /z/, /x/, nil,   nil     ],
-      [ "@B:2,4|fnord",:code,    "B",       2,     5,   4,   "fnord" ],
-      [ "$FOO",        :special, "FOO",     1,    -1, nil,   nil     ],
+      # selector       type      key        delim start end length pipeline
+      [ "@A",          :code,    "A",       '..',  1,    -1, nil,   nil     ],
+      [ "@A:1",        :code,    "A",       nil,  1,     1, nil,   nil     ],
+      [ "",            :code,    "DEFAULT", '..',  1,    -1, nil,   nil     ],
+      [ nil,           :code,    "DEFAULT", '..',  1,    -1, nil,   nil     ],
+      [ ":2..4",       :code,    "DEFAULT", '..', 2,     4, nil,   nil     ],
+      [ ":2...4",      :code,    "DEFAULT", '...',2,     4, nil,   nil     ],
+      [ "@B:2,5",      :code,    "B",       ',',  2,   nil,   5,   nil     ],
+      [ "@B:/z/,6",    :code,    "B",       ',',  /z/, nil,   6,   nil     ],
+      [ "@_:/z/../x/", :code,    "_",       '..', /z/, /x/, nil,   nil     ],
+      [ "@B:2,4|fnord",:code,    "B",       ',',  2,   nil,   4,   "fnord" ],
+      [ "$FOO",        :special, "FOO",     '..',  1,    -1, nil,   nil     ],
     ]
 
     EXAMPLE_SELECTORS.each do |selector_attributes| 
       selector_string = selector_attributes[0]
       type            = selector_attributes[1]
       key             = selector_attributes[2]
-      start           = selector_attributes[3]
-      end_offset      = selector_attributes[4]
-      length          = selector_attributes[5]
-      pipeline        = selector_attributes[6]
+      delimiter       = selector_attributes[3]
+      start           = selector_attributes[4]
+      end_offset      = selector_attributes[5]
+      length          = selector_attributes[6]
+      pipeline        = selector_attributes[7]
 
       context "given selector '#{selector_attributes[0]}'" do
         before :each do
@@ -53,6 +54,9 @@ module Germinate
         end
         it "should have pipeline #{pipeline.inspect}" do
           @it.pipeline.should == pipeline 
+        end
+        it "should have delimiter #{delimiter.inspect}" do
+          @it.delimiter.should == delimiter
         end
       end
     end

@@ -57,6 +57,21 @@ module Germinate
         ]
       end
     end
+
+    describe "with some content" do
+      before :each do
+        @it.push("foo", "bar", "foo", "baz")
+      end
+
+      it "should be able to find indexes of elements matching a regex" do
+        @it.index_matching(/ba/).should == 1
+        @it.index_matching(/fo/).should == 0
+        @it.index_matching(/fo/, 1).should == 2
+        @it.index_matching(/fo/, 2).should == 2
+        @it.index_matching(/fo/, 3).should be_nil
+        @it.index_matching(/za/, 3).should be_nil
+      end
+    end
   end
 
 end

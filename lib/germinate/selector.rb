@@ -5,11 +5,12 @@ class Germinate::Selector
   attr_reader :start_offset
   attr_reader :end_offset
   attr_reader :length
+  attr_reader :delimiter
   attr_reader :pipeline
   attr_reader :default_key
 
   PATTERN = /([@$])?(\w+)?(:([^\s\|]+))?(\|(\w+))?/
-  EXCERPT_PATTERN = %r{((\d+)|(/[^/]*/))(((\.\.\.?)|(,))((\d+)|(/[^/]*/)))?}
+  EXCERPT_PATTERN = %r{((-?\d+)|(/[^/]*/))(((\.\.\.?)|(,))((-?\d+)|(/[^/]*/)))?}
 
   def initialize(string, default_key)
     @string      = string
@@ -29,6 +30,7 @@ class Germinate::Selector
     if match_data[3]
       parse_excerpt(match_data[3])
     else
+      @delimiter    = '..'
       @start_offset = 1
       @end_offset   = -1
       @length       = nil
@@ -50,7 +52,7 @@ class Germinate::Selector
     match_data = EXCERPT_PATTERN.match(excerpt)
     integer_start_offset = match_data[2]
     regexp_start_offset  = match_data[3]
-    delimiter            = match_data[5]
+    @delimiter           = match_data[5]
     integer_end_offset   = match_data[9]
     regexp_end_offset    = match_data[10]
 
@@ -62,41 +64,20 @@ class Germinate::Selector
       raise "Could not parse start offset '#{match_data[1]}'"
     end
 
-    op = case delimiter
-         when '..' then :inclusive
-         when '...' then :exclusive
-         when ',' then :length
-         else :none
-         end
-
-    if integer_end_offset
-      @end_offset = integer_end_offset.to_i
-    elsif regexp_end_offset
-      @end_offset = Regexp.new(regexp_end_offset[1..-2])
-    else
+    case @delimiter
+    when '..', '...'
+      if integer_end_offset
+        @end_offset = integer_end_offset.to_i
+      elsif regexp_end_offset
+        @end_offset = Regexp.new(regexp_end_offset[1..-2])
+      end
+    when nil
       @end_offset = @start_offset
-      @length     = 1
+    when ','
+      @length = integer_end_offset.to_i
+    else raise "Should not get here"
     end
 
-    case op
-    when :inclusive
-      if integer_offsets?
-        @length = @end_offset - (@start_offset-1)
-      end
-    when :exclusive
-      if integer_offsets?
-        @end_offset -= 1
-        @length = @end_offset - (@start_offset-1)
-      end
-    when :length
-      @length = @end_offset
-      if integer_offsets?
-        @end_offset = (@start_offset + @length) - 1
-      else
-        @end_offset = nil
-      end
-    end
-      
   end
 
   def integer_offsets?
@@ -104,6 +85,7 @@ class Germinate::Selector
   end
 
   def offset_for_slice(offset)
+    return offset if offset.nil? || offset.kind_of?(Regexp)
     if offset < 1
       offset
     else

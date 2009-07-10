@@ -1,0 +1,22 @@
+We can select code by regexp
+def foo
+  # ...
+end
+
+Or with a regex and a length
+def bar
+  # ...
+end
+
+class Frob
+  # ...
+end
+
+Ending offset can be exclusive
+def foo
+  # ...
+end
+
+def bar
+  # ...
+end

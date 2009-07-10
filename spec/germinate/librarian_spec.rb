@@ -215,19 +215,29 @@ module Germinate
       end
 
       SELECTOR_EXAMPLES = [
-        # Selector           Expected Excerpt                   Expected Type
-        [ "@SECTION1",       ["CODE 1"],                        CodeHunk ],
-        [ "@SECTION2:1",     ["CODE 2"],                        CodeHunk ],
-        [ "@SECTION2:2..3",  ["CODE 2l2", "CODE 2l3"],          CodeHunk ],
-        [ "@SECTION2:2,2",   ["CODE 2l2", "CODE 2l3"],          CodeHunk ],
-        [ "$CODE",           [          
+        # Selector                  Expected Excerpt                   Expected Type
+        [ "@SECTION1",              ["CODE 1"],                        CodeHunk ],
+        [ "@SECTION2:1",            ["CODE 2"],                        CodeHunk ],
+        [ "@SECTION2:2..3",         ["CODE 2l2", "CODE 2l3"],          CodeHunk ],
+        [ "@SECTION2:2,2",          ["CODE 2l2", "CODE 2l3"],          CodeHunk ],
+        [ "@SECTION2:/l2/../l3/",   ["CODE 2l2", "CODE 2l3"],          CodeHunk ],
+        [ "@SECTION2:/l2/.../l3/",  ["CODE 2l2"],                      CodeHunk ],
+        [ "@SECTION2:/2/,3",        [
+            "CODE 2",
+            "CODE 2l2", 
+            "CODE 2l3"],                                               CodeHunk ],
+        [ "@SECTION2:/l2/..-1",     [
+            "CODE 2l2", 
+            "CODE 2l3", 
+            "CODE 2l4"],                                               CodeHunk ],
+        [ "$CODE",                  [          
             "CODE 1",
             "CODE 2",
             "CODE 2l2",
             "CODE 2l3",
             "CODE 2l4", ],                                      CodeHunk 
         ],
-        [ "$SOURCE",        [          
+        [ "$SOURCE",               [          
             "FM 1",
             "FM 2",
             "CONTROL 1",
@@ -244,7 +254,7 @@ module Germinate
             "CODE 2l4",
           ],                                                    CodeHunk
         ],
-        [ "$TEXT",          [          
+        [ "$TEXT",               [          
             "TEXT 1",
             "TEXT 2",
             "TEXT 3",
