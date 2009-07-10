@@ -1,5 +1,6 @@
 require 'alter_ego'
 require 'forwardable'
+require 'fattr'
 
 # The Reader is responsible for reading a source file, breaking it down into
 # into its constituent chunks of text, code, etc., assigning names to them, and
@@ -9,12 +10,12 @@ class Germinate::Reader
   include AlterEgo
   extend Forwardable
 
-  CONTROL_KEYWORDS = %w[TEXT SAMPLE CUT END INSERT BRACKET_CODE]
-  CONTROL_PATTERN  = /^\s*(\S+)?\s*:(#{CONTROL_KEYWORDS.join('|')}):\s*(.*)?\s*$/
+  CONTROL_PATTERN  = /^\s*(\S+)?\s*:([A-Z0-9_]+):\s*(.*)?\s*$/
 
   attr_reader :librarian
   attr_reader :current_section
   attr_reader :section_count
+  fattr(:log) { Germinate.logger }
   
   def_delegators :librarian, 
                  :comment_prefix, 
@@ -60,10 +61,12 @@ class Germinate::Reader
     @librarian       = librarian
     @section_count   = 0
     @current_section = "SECTION0"
+    @line_number     = 1
   end
 
   # Read a line
   def <<(line)
+    @line_number += 1
     unless handle_control_line!(line)
       add_line!(line)
     end
@@ -117,7 +120,9 @@ class Germinate::Reader
       when "END"    then end_control_line!(*arguments)
       when "INSERT" then insert_control_line!(*arguments)
       when "BRACKET_CODE" then bracket_code_control_line!(*arguments)
-      else raise "Unknown keyword '#{keyword}'"
+      when "PROCESS" then process_control_line!(*arguments) 
+      else 
+        @log.warn "Ignoring unknown directive #{keyword} at line #{@line_number}"
       end
       librarian.add_control!(line)
       true
@@ -161,6 +166,10 @@ class Germinate::Reader
     librarian.add_insertion!(
       current_section, 
       Germinate::Selector.new(selector, current_section))
+  end
+
+  def process_control_line!(process_name, command)
+    librarian.add_process!(process_name, command)
   end
 
   def sample_name=(name)

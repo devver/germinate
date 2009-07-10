@@ -4,6 +4,7 @@ module Germinate::SharedStyleAttributes
   fattr :comment_prefix
   fattr :code_open_bracket  => nil
   fattr :code_close_bracket => nil
+  fattr :pipeline           => []
 
   def shared_style_attributes
     Germinate::SharedStyleAttributes.fattrs.inject({}) { 

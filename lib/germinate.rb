@@ -1,4 +1,7 @@
 require 'rubygems'
+require 'fattr'
+require 'logger'
+
 module Germinate
 
   # :stopdoc:
@@ -41,6 +44,8 @@ module Germinate
 
     Dir.glob(search_me).sort.each {|rb| require rb}
   end
+
+  Fattr(:logger) { Logger.new($stderr) }
 
 end  # module Germinate
 

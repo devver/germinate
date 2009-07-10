@@ -80,4 +80,11 @@ module Germinate::TextTransforms
       result
     }
   end
+
+  def self.pipeline(pipeline=nil)
+    lambda do |hunk|
+      pipeline ||= hunk.pipeline
+      pipeline.call(hunk)
+    end
+  end
 end

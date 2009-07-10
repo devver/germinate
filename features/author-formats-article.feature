@@ -103,5 +103,6 @@ Feature: author formats article
     | sample_offsets.rb | sample_offsets.txt |
     | specials.rb       | specials.txt       |
     | regexen.rb        | regexen.txt        |
+    | pipelines.txt     | pipelines.out      |
 
 

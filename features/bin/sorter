@@ -1,0 +1,4 @@
+#!/usr/bin/env ruby
+$stdin.readlines.sort.each do |line|
+  puts line
+end

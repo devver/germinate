@@ -6,6 +6,14 @@ require File.expand_path(
 require 'main'
 
 Main do
+  description <<-END
+    Germinate - A tool for writing about code.
+  END
+
+  author "Avdi Grimm <avdi@avdi.org>"
+
+  version Germinate::VERSION
+
   argument :source do
     arity 1
     validate{|source| Pathname(source).readable?}
@@ -14,6 +22,7 @@ Main do
 
   mode :format do
     def run
+      Germinate.logger = self
       File.open(params['source'].value) do |source|
         application = Germinate::Application.new
         application.format(source, $stdout, $stderr)

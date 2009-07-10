@@ -1,0 +1,28 @@
+Sorting the sample:
+aaron
+george
+joe
+sally
+susan
+zack
+
+Quoting the sample:
+> joe
+> sally
+> aaron
+> george
+> zack
+> susan
+
+We can combine pipelines with excerpting:
+> sally
+> aaron
+> george
+
+And we can chain processes to form a true pipeline:
+> aaron
+> george
+> joe
+> sally
+> susan
+> zack

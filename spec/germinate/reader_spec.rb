@@ -46,7 +46,8 @@ module Germinate
       ["$>:END: ",            "$>",    []],
       [":SAMPLE: bar, { a: 1, b: 2 }", nil, ["bar", {"a"=>1, "b"=>2}]],
       [':BRACKET_CODE:',      nil,     []],
-      [':INSERT: @sel',       nil,     ["@sel"]]
+      [':INSERT: @sel',       nil,     ["@sel"]],
+      [':PROCESS: foo, bar',  nil,     ["foo", "bar"]],
     ]
 
     CONTROL_LINES.each do |(line, comment, args)|
@@ -272,6 +273,17 @@ module Germinate
           selector.string.should == "foo"
           selector.default_key.should == "mysection"
         end
+        @it << @line
+      end
+    end
+
+    context "given a process directive" do
+      before :each do
+        @line = ' # :PROCESS: sortail, "sort | tail"'
+      end
+
+      it "should add the process to the library" do
+        @librarian.should_receive(:add_process!).with("sortail", "sort | tail")
         @it << @line
       end
     end

@@ -4,18 +4,19 @@ require File.expand_path(
 module Germinate
   describe Selector do
     EXAMPLE_SELECTORS = [
-      # selector       type      key        delim start end length pipeline
-      [ "@A",          :code,    "A",       '..',  1,    -1, nil,   nil     ],
-      [ "@A:1",        :code,    "A",       nil,  1,     1, nil,   nil     ],
-      [ "",            :code,    "DEFAULT", '..',  1,    -1, nil,   nil     ],
-      [ nil,           :code,    "DEFAULT", '..',  1,    -1, nil,   nil     ],
-      [ ":2..4",       :code,    "DEFAULT", '..', 2,     4, nil,   nil     ],
-      [ ":2...4",      :code,    "DEFAULT", '...',2,     4, nil,   nil     ],
-      [ "@B:2,5",      :code,    "B",       ',',  2,   nil,   5,   nil     ],
-      [ "@B:/z/,6",    :code,    "B",       ',',  /z/, nil,   6,   nil     ],
-      [ "@_:/z/../x/", :code,    "_",       '..', /z/, /x/, nil,   nil     ],
-      [ "@B:2,4|fnord",:code,    "B",       ',',  2,   nil,   4,   "fnord" ],
-      [ "$FOO",        :special, "FOO",     '..',  1,    -1, nil,   nil     ],
+      # selector       type      key        delim  start end length pipeline
+      [ "@A",          :code,    "A",       '..',  1,    -1, nil,   []     ],
+      [ "@A:1",        :code,    "A",       nil,   1,    1,  nil,   []     ],
+      [ "",            :code,    "DEFAULT", '..',  1,    -1, nil,   []     ],
+      [ nil,           :code,    "DEFAULT", '..',  1,    -1, nil,   []     ],
+      [ ":2..4",       :code,    "DEFAULT", '..',  2,    4,  nil,   []     ],
+      [ ":2...4",      :code,    "DEFAULT", '...', 2,    4,  nil,   []     ],
+      [ "@B:2,5",      :code,    "B",       ',',   2,    nil,5,     []     ],
+      [ "@B:/z/,6",    :code,    "B",       ',',   /z/,  nil,6,     []     ],
+      [ "@_:/z/../x/", :code,    "_",       '..',  /z/,  /x/,nil,   []     ],
+      [ "@B:2,4|fnord",:code,    "B",       ',',   2,    nil,4,     ["fnord"]],
+      [ "$FOO",        :special, "FOO",     '..',  1,    -1, nil,   []     ],
+      [ "@A|foo|bar",  :code,    "A",       '..',  1,    -1, nil,   ["foo", "bar"]],
     ]
 
     EXAMPLE_SELECTORS.each do |selector_attributes| 

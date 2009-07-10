@@ -13,6 +13,8 @@ class Germinate::Librarian
   attr_reader   :code_lines
   attr_reader   :front_matter_lines
 
+  fattr(:log) { Germinate.logger }
+
   def initialize
     @lines              = []
     @text_lines         = []
@@ -24,6 +26,7 @@ class Germinate::Librarian
     @samples            = OrderedHash.new do |hash, key| 
       hash[key] = Germinate::CodeHunk.new([], shared_style_attributes)
     end
+    @processes = {}
   end
 
   def add_front_matter!(line)
@@ -58,6 +61,10 @@ class Germinate::Librarian
     end
   end
 
+  def add_process!(process_name, command)
+    @processes[process_name] = Germinate::Process.new(process_name, command)
+  end
+
   def comment_prefix_known?
     !comment_prefix.nil?
   end
@@ -84,6 +91,15 @@ class Germinate::Librarian
     Array(@samples[sample_name])
   end
 
+  # Fetch a process by name
+  def process(process_name)
+    @processes.fetch(process_name)
+  end
+
+  def process_names
+    @processes.keys
+  end
+
   def has_sample?(sample_name)
     @samples.key?(sample_name)
   end
@@ -107,6 +123,9 @@ class Germinate::Librarian
         raise Exception, 
               "Unknown selector type #{selector.selector_type.inspect}"
       end
+    
+    sample = execute_pipeline(sample, selector.pipeline)
+
     start_offset = start_offset(sample, selector)
     end_offset   = end_offset(sample, selector, start_offset)
     case selector.delimiter
@@ -151,5 +170,10 @@ class Germinate::Librarian
     else
       raise "Don't know how to use #{offset.inspect} as an offset"
     end
+  end
+
+  def execute_pipeline(hunk, process_names)
+    processes = process_names.map{|n| process(n)}
+    Germinate::Pipeline.new(processes).call(hunk)
   end
 end

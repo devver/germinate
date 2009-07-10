@@ -99,6 +99,63 @@ module Germinate
       end
     end
 
+    context "given a process to file" do 
+      before :each do
+        @it.add_process!("myproc", "cowsay")
+      end
+
+      it "should make the process available as a Process object" do
+        @it.process("myproc").should be_a_kind_of(Germinate::Process)
+      end
+
+      it "should store the process name" do
+        @it.process("myproc").name.should == "myproc"
+      end
+
+      it "should store the process command" do
+        @it.process("myproc").command.should == "cowsay"
+      end
+
+      it "should include the process when listing known processes" do
+        @it.process_names.should include("myproc")
+      end
+    end
+
+    context "given a code sample and some processes" do
+      before :each do 
+        @output_a  = ["line 1a", "line 2a"]
+        @output_b  = ["line 1b", "line 2b"]
+        @process_a = stub("Process A", :call => @output_a)
+        @process_b = stub("Process B", :call => @output_b)
+        Germinate::Process.stub!(:new).
+          with("foo", "aaa").
+          and_return(@process_a)
+        Germinate::Process.stub!(:new).
+          with("bar", "bbb").
+          and_return(@process_b)
+
+        @it.add_code!("A", "line 1")
+        @it.add_code!("A", "line 2")
+        @it.add_process!("foo", "aaa")
+        @it.add_process!("bar", "bbb")
+      end
+
+      context "when the processes are included in a selection" do
+        before :each do
+          @selector = "@A|foo|bar"
+        end
+
+        it "should call the processes on the selected text" do
+          @process_a.should_receive(:call).with(["line 1", "line 2"]).
+            and_return(@output_a)
+          @process_b.should_receive(:call).with(@output_a).
+            and_return(@output_b)
+
+          @it[@selector].should == ["line 1b", "line 2b"]
+        end
+      end
+    end
+
     context "given an assortment of lines" do
       before :each do
         @it.add_front_matter!("FM 1")

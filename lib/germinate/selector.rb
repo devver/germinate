@@ -9,7 +9,7 @@ class Germinate::Selector
   attr_reader :pipeline
   attr_reader :default_key
 
-  PATTERN = /([@$])?(\w+)?(:([^\s\|]+))?(\|(\w+))?/
+  PATTERN = /([@$])?(\w+)?(:([^\s\|]+))?(\|([\w|]+))?/
   EXCERPT_PATTERN = %r{((-?\d+)|(/[^/]*/))(((\.\.\.?)|(,))((-?\d+)|(/[^/]*/)))?}
 
   def initialize(string, default_key)
@@ -35,7 +35,7 @@ class Germinate::Selector
       @end_offset   = -1
       @length       = nil
     end
-    @pipeline = match_data[6]
+    @pipeline = String(match_data[6]).split("|")
   end
 
   def start_offset_for_slice

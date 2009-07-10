@@ -7,7 +7,8 @@ module Germinate
     Germinate::TextTransforms.methods(false).each do |transform|
       describe "'#{transform}'" do
         it "should preserve hunk attributes from input to output" do
-          @input = Hunk.new([], :comment_prefix => "foo")
+          @pipeline = lambda {|h| h}
+          @input = Hunk.new([], :comment_prefix => "foo", :pipeline => @pipeline)
           @transform = Germinate::TextTransforms.send(transform)
           @output = @transform.call(@input)
           @output.comment_prefix.should == @input.comment_prefix
@@ -127,6 +128,25 @@ module Germinate
 
         it "should leave the hunk unchanged" do
           @it.call(@hunk).should == ["line 1", "line 2"]
+        end
+      end
+    end
+
+    describe "pipeline" do
+      before :each do
+        @output   = stub("Output")
+        @pipeline = stub("Pipeline", :call => @output)
+        @hunk     = stub("Hunk")
+      end
+
+      context "called on a hunk and a pipeline" do
+        before :each do
+          @it = TextTransforms.pipeline(@pipeline)
+        end
+
+        it "should invoke the pipeline on the hunk" do
+          @pipeline.should_receive(:call).with(@hunk).and_return(@output)
+          @it.call(@hunk).should == @output
         end
       end
     end

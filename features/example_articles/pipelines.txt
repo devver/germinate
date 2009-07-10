@@ -1,0 +1,25 @@
+# A %f will be replaced with a path to a temporary file
+# :PROCESS: quote, "quoter %f"
+#
+# If there is no %f the content will be piped into the command on STDIN
+# :PROCESS: sort,  "sorter"
+
+# :SAMPLE: names
+joe
+sally
+aaron
+george
+zack
+susan
+# :TEXT:
+# Sorting the sample:
+# :INSERT: @names|sort
+#
+# Quoting the sample:
+# :INSERT: @names|quote
+#
+# We can combine pipelines with excerpting:
+# :INSERT: @names:2..4|quote
+#
+# And we can chain processes to form a true pipeline:
+# :INSERT: @names|sort|quote
