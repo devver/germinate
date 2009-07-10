@@ -31,6 +31,7 @@ PROJ.ruby_opts = []
 
 PROJ.readme_file = "README.rdoc"
 PROJ.rdoc.main = "README.rdoc"
+PROJ.rdoc.exclude << "features"
 
 depend_on "ick",         "~> 0.3.0"
 depend_on "fattr",       "~> 1.0.3"

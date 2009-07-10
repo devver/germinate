@@ -48,7 +48,7 @@ When we run the <tt>germ format</tt> command the following output is generated:
   </pre>
 
 To get a better idea of how this works, please take a look at
-link:doc/examples/basic.rb, or run:
+link:examples/basic.rb, or run:
 
   germ generate > basic.rb
 
@@ -83,6 +83,10 @@ check them out at http://devver.net.
   engines, e.g. WordPress.
 * Introspection commands make it easy to experiment
 * Fully tested
+
+== KNOWN ISSUES
+
+* Directive syntax conflicts with RDoc.  Doh!
 
 == FUTURE
 
