@@ -9,6 +9,11 @@ module Germinate
   describe Librarian do
     before :each do
       @it = Librarian.new
+      @it.source_path = "SOURCE_PATH"
+    end
+
+    it "should know its source path if given" do
+      @it.source_path.should == "SOURCE_PATH"
     end
 
     context "by default" do
@@ -275,6 +280,21 @@ module Germinate
         @it["@SECTION1"].should == ["CODE 1"]
       end
 
+      context "given the $SOURCE selector with no subscripts" do
+        before :each do
+          @hunk = @it["$SOURCE"]
+        end
+
+        it "should return a FileHunk" do
+          @hunk.should be_a_kind_of(FileHunk)
+        end
+
+        it "should return a FileHunk with the source file path set" do
+          @hunk.source_path.should == "SOURCE_PATH"
+        end
+
+      end
+
       SELECTOR_EXAMPLES = [
         # Selector                  Expected Excerpt                   Expected Type
         [ "@SECTION1",              ["CODE 1"],                        CodeHunk ],
@@ -313,7 +333,7 @@ module Germinate
             "CODE 2l2",
             "CODE 2l3",
             "CODE 2l4",
-          ],                                                    CodeHunk
+          ],                                                    FileHunk
         ],
         [ "$TEXT",               [          
             "TEXT 1",

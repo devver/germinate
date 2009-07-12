@@ -3,8 +3,8 @@
 class Germinate::Application
   attr_writer :formatter
 
-  def format(source, output=$stdout, errors=$stderr)
-    librarian = load_librarian(source)
+  def format(source, path, output=$stdout, errors=$stderr)
+    librarian = load_librarian(source, path)
     editor    = Germinate::ArticleEditor.new(librarian)
     formatter = Germinate::ArticleFormatter.new(output)
 
@@ -19,8 +19,8 @@ class Germinate::Application
     formatter.finish!
   end
 
-  def list(source, things_to_list, output=$stdout)
-    librarian = load_librarian(source)
+  def list(source, path, things_to_list, output=$stdout)
+    librarian = load_librarian(source, path)
     if things_to_list.include?(:sections)
       output.puts(librarian.section_names.join("\n"))
     end
@@ -32,8 +32,8 @@ class Germinate::Application
     end
   end
 
-  def show(source, selection, output=$stdout)
-    librarian = load_librarian(source)
+  def show(source, path, selection, output=$stdout)
+    librarian = load_librarian(source, path)
     selection.fetch(:section, []).each do |section|
       output.puts(*librarian.section(section))
     end
@@ -45,15 +45,15 @@ class Germinate::Application
     end
   end
 
-  def select(source, selector, output=$stdout)
-    librarian = load_librarian(source)
+  def select(source, path, selector, output=$stdout)
+    librarian = load_librarian(source, path)
     output.puts(*librarian[selector])
   end
   private
 
-  def load_librarian(source)
+  def load_librarian(source, path)
     librarian = Germinate::Librarian.new
-    reader    = Germinate::Reader.new(librarian)
+    reader    = Germinate::Reader.new(librarian, path)
     source.each_line do |line|
       reader << line
     end

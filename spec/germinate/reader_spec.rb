@@ -6,7 +6,7 @@ module Germinate
     before :each do
       @librarian = stub("Librarian", :comment_prefix_known? => false).
         as_null_object
-      @it        = Reader.new(@librarian)
+      @it        = Reader.new(@librarian, "SOURCE_PATH")
     end
 
     it "should start in the :initial state" do
@@ -19,6 +19,11 @@ module Germinate
 
     it "should start out with current section SECTION0" do
       @it.current_section.should == "SECTION0"
+    end
+
+    it "should set the librarian's source path" do
+      @librarian.should_receive(:source_path=).with(Pathname("SOURCE_PATH"))
+      @it = Reader.new(@librarian, "SOURCE_PATH")
     end
 
     context "when section count is incremented" do

@@ -40,6 +40,12 @@ module Germinate
       @it = Hunk.new
     end
 
+    it "should not have a source path" do
+      @it.source_path.should be_nil
+    end
+
+    specify { @it.should_not be_whole_file }
+
     context "with an insertion" do
       before :each do
         @nested_hunk = stub("Nested Hunk")

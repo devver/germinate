@@ -60,5 +60,21 @@ module Germinate
       end
 
     end
+
+    context "given a command 'mycommand %f' and called on a file hunk" do
+      before :each do
+        @input = Germinate::FileHunk.new(
+          ["line 1\n", "line 2\n"],
+          {:source_path => "SOURCE_PATH"})
+        @it = Germinate::Process.new("myproc", "mycommand %f")
+      end
+
+      it "should pass the source file path to the command" do
+        @path = stub("Source File Path")
+        IO.should_receive(:popen).with("mycommand 'SOURCE_PATH'", "r").
+          and_yield(@command)
+        @it.call(@input).should == @output
+      end
+    end
   end
 end

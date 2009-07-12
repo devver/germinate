@@ -5,6 +5,7 @@ module Germinate::SharedStyleAttributes
   fattr :code_open_bracket  => nil
   fattr :code_close_bracket => nil
   fattr :pipeline           => []
+  fattr :source_path        => nil
 
   def shared_style_attributes
     Germinate::SharedStyleAttributes.fattrs.inject({}) { 
@@ -15,7 +16,7 @@ module Germinate::SharedStyleAttributes
     }
   end
 
-  def copy_shared_style_attrubutes_from(other, override=true)
+  def copy_shared_style_attributes_from(other, override=true)
     case other
     when Germinate::SharedStyleAttributes
       copy_attributes!(other.shared_style_attributes)

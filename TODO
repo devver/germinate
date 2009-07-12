@@ -8,7 +8,8 @@
 
 <2009-07-12 Sun> My mistake... the shell was interpreting the $SOURCE directive.
     
-* TODO Make $SOURCE use the actual source file path in processes
+* DONE Make $SOURCE use the actual source file path in processes
+  CLOSED: [2009-07-12 Sun 19:46]
 
 * TODO Improve error message for non-matching regexen in selectors :usability:
 

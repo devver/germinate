@@ -3,8 +3,27 @@ require File.expand_path(
 
 module Germinate
   describe Selector do
+
+    context "given a subscript" do
+      before :each do
+        @it = Germinate::Selector.new("@A:1", "DEFAULT")
+      end
+
+      specify { @it.should be_slice }
+      specify { @it.should_not be_whole }
+    end
+
+    context "given a subscript" do
+      before :each do
+        @it = Germinate::Selector.new("@A", "DEFAULT")
+      end
+
+      specify { @it.should_not be_slice }
+      specify { @it.should be_whole }
+    end
+
     EXAMPLE_SELECTORS = [
-      # selector       type      key        delim  start end length pipeline
+      # selector       type      key        delim  start end length pipeline 
       [ "@A",          :code,    "A",       '..',  1,    -1, nil,   []     ],
       [ "@A:1",        :code,    "A",       nil,   1,    1,  nil,   []     ],
       [ "",            :code,    "DEFAULT", '..',  1,    -1, nil,   []     ],

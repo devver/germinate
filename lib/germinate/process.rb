@@ -19,6 +19,8 @@ class Germinate::Process
   def call(input)
     if pipe?
       call_command_in_pipe(input)
+    elsif input.whole_file?
+      call_command_on_source_file(input)
     else
       call_command_on_temp_file(input)
     end
@@ -45,6 +47,12 @@ class Germinate::Process
       log_popen(substitute_filename(command, file.path), 'r') do |process|
         return input.class.new(process.readlines, input)
       end
+    end
+  end
+
+  def call_command_on_source_file(input)
+    log_popen(substitute_filename(command, input.source_path), 'r') do |process|
+      return Germinate::CodeHunk.new(process.readlines, input)
     end
   end
 

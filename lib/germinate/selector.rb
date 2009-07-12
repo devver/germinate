@@ -28,8 +28,10 @@ class Germinate::Selector
       end
     @key = match_data[2] || default_key
     if match_data[3]
+      @slice = true
       parse_excerpt(match_data[3])
     else
+      @slice        = false
       @delimiter    = '..'
       @start_offset = 1
       @end_offset   = -1
@@ -44,6 +46,16 @@ class Germinate::Selector
 
   def end_offset_for_slice
     offset_for_slice(end_offset)
+  end
+
+  # Is it just a subset of the source hunk? (opposite of @whole?)
+  def slice?
+    @slice
+  end
+
+  # Is it the entire hunk? (opposite of #slice?)
+  def whole?
+    !@slice
   end
 
   private

@@ -57,11 +57,13 @@ class Germinate::Reader
 
   end
 
-  def initialize(librarian)
+  def initialize(librarian, source_path=nil)
     @librarian       = librarian
     @section_count   = 0
     @current_section = "SECTION0"
     @line_number     = 1
+    @source_path     = source_path ? Pathname(source_path) : nil
+    librarian.source_path = @source_path
   end
 
   # Read a line

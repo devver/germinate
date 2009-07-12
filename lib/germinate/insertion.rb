@@ -8,14 +8,14 @@ class Germinate::Insertion
   attr_reader :selector
 
   def initialize(selector, library, template={})
-    copy_shared_style_attrubutes_from(template)
+    copy_shared_style_attributes_from(template)
     @selector = selector
     @library  = library
   end
 
   def resolve
     returning(library[selector]) do |hunk|
-      hunk.copy_shared_style_attrubutes_from(self, false)
+      hunk.copy_shared_style_attributes_from(self, false)
     end
   end
 end

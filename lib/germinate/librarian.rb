@@ -13,6 +13,8 @@ class Germinate::Librarian
   attr_reader   :code_lines
   attr_reader   :front_matter_lines
 
+  fattr         :source_path => nil
+
   fattr(:log) { Germinate.logger }
 
   def initialize
@@ -114,7 +116,12 @@ class Germinate::Librarian
       when :code then sample(selector.key)
       when :special then 
         case selector.key
-        when "SOURCE" then Germinate::CodeHunk.new(lines, self)
+        when "SOURCE" 
+          if selector.whole?
+            Germinate::FileHunk.new(lines, self)
+          else
+            Germinate::CodeHunk.new(lines, self)
+          end
         when "CODE"   then Germinate::CodeHunk.new(code_lines, self)
         when "TEXT"   then Germinate::CodeHunk.new(text_lines, self)
         else raise "Unknown special section '$#{selector.key}'"

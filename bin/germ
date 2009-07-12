@@ -44,9 +44,9 @@ Main do
     source_argument
     def run
       Germinate.logger = self
-      with_source_file do |source|
+      with_source_file do |source, path|
         application = Germinate::Application.new
-        application.format(source, $stdout, $stderr)
+        application.format(source, path, $stdout, $stderr)
       end
     end
   end
@@ -67,9 +67,9 @@ Main do
       COLLECTIONS.each do |collection|
         things_to_list << collection if params[collection].value
       end
-      with_source_file do |source|
+      with_source_file do |source, path|
         application = Germinate::Application.new
-        application.list(source, things_to_list, $stdout)
+        application.list(source, path, things_to_list, $stdout)
       end
     end
   end
@@ -90,9 +90,9 @@ Main do
         sel[type] = params[type].values
         sel
       }
-      with_source_file do |source|
+      with_source_file do |source, path|
         application = Germinate::Application.new
-        application.show(source, selection, $stdout)
+        application.show(source, path, selection, $stdout)
       end
     end
   end
@@ -108,9 +108,9 @@ Main do
     end
 
     def run
-      with_source_file do |source|
+      with_source_file do |source, path|
         application = Germinate::Application.new
-        application.select(source, params[:selector].value, $stdout)
+        application.select(source, path, params[:selector].value, $stdout)
       end
     end
   end
@@ -125,8 +125,11 @@ Main do
     end
   end
 
-  def with_source_file(&block)
-    File.open(params['source'].value, &block)
+  def with_source_file
+    path = params['source'].value
+    File.open(path) do |file|
+      yield file, path
+    end
   end
 end
 

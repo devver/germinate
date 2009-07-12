@@ -1,4 +1,6 @@
+require 'pathname'
 require 'ick'
+require 'fattr'
 require File.expand_path("shared_style_attributes", File.dirname(__FILE__))
 
 # A Hunk represents a chunk of content.  There are different types of Hunk, like
@@ -11,7 +13,7 @@ class Germinate::Hunk < ::Array
 
   def initialize(contents=[], template = {})
     super(contents)
-    copy_shared_style_attrubutes_from(template)
+    copy_shared_style_attributes_from(template)
   end
 
   # return a copy with leading and trailing whitespace lines removed
@@ -51,7 +53,7 @@ class Germinate::Hunk < ::Array
   def [](*args)
     returning(super) do |slice|
       if slice.kind_of?(Germinate::Hunk)
-        slice.copy_shared_style_attrubutes_from(self)
+        slice.copy_shared_style_attributes_from(self)
       end
     end
   end
@@ -59,7 +61,7 @@ class Germinate::Hunk < ::Array
   def slice(*args)
     returning(super) do |slice|
       if slice.kind_of?(Germinate::Hunk)
-        slice.copy_shared_style_attrubutes_from(self)
+        slice.copy_shared_style_attributes_from(self)
       end
     end
   end
@@ -69,6 +71,10 @@ class Germinate::Hunk < ::Array
       return i if pattern === self[i]
     }
     nil
+  end
+
+  def whole_file?
+    false
   end
 
   private
@@ -113,6 +119,7 @@ class Germinate::Hunk < ::Array
 
 end
 
+# Represents a hunk of article text
 class Germinate::TextHunk < Germinate::Hunk
   def format_with(formatter)
     super(formatter) do |formatter|
@@ -121,6 +128,7 @@ class Germinate::TextHunk < Germinate::Hunk
   end
 end
 
+# Represents a hunk of source code
 class Germinate::CodeHunk < Germinate::Hunk
   def code_open_bracket=(new_value)
     super
@@ -139,5 +147,17 @@ class Germinate::CodeHunk < Germinate::Hunk
 end
 
 class Germinate::NullHunk < Germinate::Hunk
+end
+
+# Represents a the entire text of a file on disk
+class Germinate::FileHunk < Germinate::CodeHunk
+  def initialize(lines, template)
+    super(lines, template)
+    raise ArgumentError, "Path required" if source_path.nil?
+  end
+
+  def whole_file?
+    true
+  end
 end
 
