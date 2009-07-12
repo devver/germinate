@@ -1,0 +1,59 @@
+# -*- mode: org -*-
+#+SEQ_TODO:  TODO | DONE INVALID
+
+* INVALID Fix bug in `germ select`                          :bug:
+  CLOSED: [2009-07-12 Sun 18:25]
+:   germ select -s "$SOURCE|ruby" ruby_subprocesses_part_2.rb 
+:   F, [2009-07-12T17:41:17.331337 #19506] FATAL -- : No code sample named 'SECTION0'.  Known samples: helpers, SECTION3, open_with_pipe, open_with_pipe_dash, popen, popen_with_dash, SECTION8 (IndexError)
+
+<2009-07-12 Sun> My mistake... the shell was interpreting the $SOURCE directive.
+    
+* TODO Make $SOURCE use the actual source file path in processes
+
+* TODO Improve error message for non-matching regexen in selectors :usability:
+
+* TODO Optionally capture STDERR from processes             :feature:
+
+* TODO Output line numbers for Reader errors                :usability:
+
+* TODO Gist uploads                                         :feature:
+
+* TODO Publishing to WordPress blogs (Atompub)              :feature:
+
+* TODO Alternate directive syntax                           :usability:
+  one that doesn't conflict with RDoc
+
+* TODO Anonymous processes                                  :feature:
+  A process that doesn't match a predefined process name should be interpreted
+  as a shell command.
+
+* TODO Code indent                                          :feature:
+  Define an indent (either N spaces or a string) to be applied to code sections.
+
+  Should first de-indent code.
+
+* TODO Shorthand for matching whitespace in selectors       :feature:
+  e.g. "@mysample:/def foo/..._"
+
+* TODO Format Pipelines                                     :feature:
+  Define a pipeline to be run on the entire article after formatting
+
+* TODO ERB Substitution                                     :feature:
+  Should be run on TEXT sections.
+
+* TODO Line# Helper                                         :feature:
+  A helper for ERB subtitution which inserts the line# of a given selector.
+
+* TODO Plugin API                                           :feature:
+  Should use gems to discover plugins.
+
+* TODO User-global preference file                          :feature:
+
+* TODO Multiple file support                                :feature:
+
+* TODO Output line numbers for errors at any point          :usability:
+  This will require giving Hunks the knowledge of their source offset.
+  
+* TODO Nested samples                                       :feature:
+  Might want to wait this on the implementation of nested states in AlterEgo.
+
