@@ -67,12 +67,12 @@ class Germinate::Selector
 
   # Is it just a subset of the source hunk? (opposite of @whole?)
   def slice?
-    @slice
+    @slice && !@excerpt_output
   end
 
   # Is it the entire hunk? (opposite of #slice?)
   def whole?
-    !@slice
+    !slice?
   end
 
   private

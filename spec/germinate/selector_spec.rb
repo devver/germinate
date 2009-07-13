@@ -13,9 +13,18 @@ module Germinate
       specify { @it.should_not be_whole }
     end
 
-    context "given a subscript" do
+    context "given no subscript" do
       before :each do
         @it = Germinate::Selector.new("@A", "DEFAULT")
+      end
+
+      specify { @it.should_not be_slice }
+      specify { @it.should be_whole }
+    end
+
+    context "given a post-pipeline subscript" do
+      before :each do
+        @it = Germinate::Selector.new("@A|foo:1", "DEFAULT")
       end
 
       specify { @it.should_not be_slice }

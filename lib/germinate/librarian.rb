@@ -162,7 +162,12 @@ class Germinate::Librarian
     offset = selector.start_offset_for_slice
     case offset
     when Integer then offset
-    when Regexp  then hunk.index_matching(offset)
+    when Regexp  then 
+      returning(hunk.index_matching(offset)) do |offset|
+        if offset.nil?
+          raise "Cannot find line matching #{offset.inspect}"
+        end
+      end
     else 
       raise "Don't know how to use #{offset.inspect} as an offset"
     end
@@ -173,7 +178,11 @@ class Germinate::Librarian
     case offset
     when Integer, nil then offset
     when Regexp then 
-      hunk.index_matching(offset, start_offset)
+      returning(hunk.index_matching(offset, start_offset)) do |offset|
+        if offset.nil?
+          raise "Cannot find line matching #{offset.inspect}"
+        end
+      end
     else
       raise "Don't know how to use #{offset.inspect} as an offset"
     end
