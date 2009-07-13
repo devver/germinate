@@ -8,14 +8,16 @@ class Germinate::Selector
   attr_reader :delimiter
   attr_reader :pipeline
   attr_reader :default_key
+  attr_reader :origin
 
   PATTERN = /^([@$])?(\w+)?(:([^\s\|]+))?(\|([\w|]+))?$/
   EXCERPT_OUTPUT_PATTERN = /^([@$])?(\w+)?(\|([\w|]+))?(:([^\s\|]+))?$/
   EXCERPT_PATTERN = %r{((-?\d+)|(/[^/]*/))(((\.\.\.?)|(,))((-?\d+)|(/[^/]*/)))?}
 
-  def initialize(string, default_key)
+  def initialize(string, default_key, origin="<Unknown>")
     @string      = string
     @default_key = default_key
+    @origin      = origin
     match_data = case string
                  when "", nil then {}
                  else 
@@ -73,6 +75,10 @@ class Germinate::Selector
   # Is it the entire hunk? (opposite of #slice?)
   def whole?
     !slice?
+  end
+
+  def to_s
+    "selector '#{string}' originating from #{origin}"
   end
 
   private

@@ -45,9 +45,9 @@ class Germinate::Application
     end
   end
 
-  def select(source, path, selector, output=$stdout)
+  def select(source, path, selector, output=$stdout, origin="select command")
     librarian = load_librarian(source, path)
-    output.puts(*librarian[selector])
+    output.puts(*librarian[selector, origin])
   end
   private
 

@@ -11,7 +11,8 @@
 * DONE Make $SOURCE use the actual source file path in processes
   CLOSED: [2009-07-12 Sun 19:46]
 
-* TODO Improve error message for non-matching regexen in selectors :usability:
+* DONE Improve error message for non-matching regexen in selectors :usability:
+  CLOSED: [2009-07-13 Mon 02:17]
 
 * TODO Output line numbers for Reader errors                :usability:
 

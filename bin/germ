@@ -3,6 +3,7 @@
 require File.expand_path(
     File.join(File.dirname(__FILE__), %w[.. lib germinate]))
 
+require 'English'
 require 'main'
 
 Main do
@@ -39,11 +40,18 @@ Main do
     end
   end
 
+  option(:debug, :d) do 
+    cast :bool
+  end
+
+  def run
+    help!
+  end
+
   mode :format do
     description "Format an article for publishing"
     source_argument
     def run
-      Germinate.logger = self
       with_source_file do |source, path|
         application = Germinate::Application.new
         application.format(source, path, $stdout, $stderr)
@@ -125,11 +133,78 @@ Main do
     end
   end
 
+  def initialize
+    @command = "#{$PROGRAM_NAME} #{ARGV.join(' ')}"
+    Germinate.logger = logger
+    logger.progname = "germinate"
+    logger.formatter = lambda { |severity, time, progname, message| 
+      lines = case message
+              when ::String then message.split("\n")
+              when ::Exception then 
+                Array(message.message) + Array(message.backtrace)
+              else
+                message.inspect
+              end
+      lines.map{|l| "#{severity} -- #{progname}: #{l}"}.join("\n") + "\n"
+    }
+  end
+
+  def pre_parse_parameters
+  end
+
+  def pre_run
+    logger.level = params['debug'].value ? Logger::DEBUG : Logger::INFO
+  end
+
   def with_source_file
-    path = params['source'].value
-    File.open(path) do |file|
-      yield file, path
+    rescue_errors do
+      path = params['source'].value
+      File.open(path) do |file|
+        yield file, path
+      end
     end
+  end
+
+  def rescue_errors
+    yield
+  rescue RuntimeError => error
+    raise if params['debug'].value
+    log_user_error(error)
+  rescue Exception => error
+    raise if params['debug'].value
+    log_program_error(error)
+  end
+
+  def log_user_error(error)
+    log_fatal_error <<-END
+Germinate could not complete your command.
+Please check your command and article for proper syntax.
+#{command_report}
+#{error_report(error)}
+For more information, re-run the command with the --debug flag.
+END
+  end
+
+  def log_program_error(error)
+    log_fatal_error <<-END 
+Germinate encountered an error while executing your command.
+#{command_report}
+#{error_report(error)}
+Please re-run the command with the --debug flag, and file a problem report at 
+http://github.com/devver/germinate/
+END
+  end
+
+  def command_report
+    "The command was: '#{@command}'"
+  end
+
+  def error_report(error)
+    "The error was: '#{error.message}'"
+  end
+
+  def log_fatal_error(error)
+    logger.fatal(error)
   end
 end
 

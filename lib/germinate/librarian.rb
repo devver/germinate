@@ -96,6 +96,8 @@ class Germinate::Librarian
   # Fetch a process by name
   def process(process_name)
     @processes.fetch(process_name)
+  rescue IndexError => error
+    raise error.exception("Unknown process #{process_name.inspect}")
   end
 
   def process_names
@@ -106,10 +108,10 @@ class Germinate::Librarian
     @samples.key?(sample_name)
   end
 
-  def [](selector)
+  def [](selector, origin="<Unknown>")
     selector = case selector
                when Germinate::Selector then selector
-               else Germinate::Selector.new(selector, "SECTION0")
+               else Germinate::Selector.new(selector, "SECTION0", origin)
                end
     sample = 
       case selector.selector_type
@@ -163,9 +165,9 @@ class Germinate::Librarian
     case offset
     when Integer then offset
     when Regexp  then 
-      returning(hunk.index_matching(offset)) do |offset|
-        if offset.nil?
-          raise "Cannot find line matching #{offset.inspect}"
+      returning(hunk.index_matching(offset)) do |index|
+        if index.nil?
+          raise "Cannot find line matching #{offset.inspect} in #{selector}"
         end
       end
     else 
@@ -178,9 +180,9 @@ class Germinate::Librarian
     case offset
     when Integer, nil then offset
     when Regexp then 
-      returning(hunk.index_matching(offset, start_offset)) do |offset|
-        if offset.nil?
-          raise "Cannot find line matching #{offset.inspect}"
+      returning(hunk.index_matching(offset, start_offset)) do |index|
+        if index.nil?
+          raise "Cannot find line matching #{offset.inspect} in #{selector}"
         end
       end
     else
