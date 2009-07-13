@@ -1,3 +1,13 @@
+== 1.1.0 / 2009-07-12
+
+* 1 major enhancement
+  * Added post-pipeline excerpting, e.g. $SOURCE|ruby:/def foo/../end/
+    Post-pipeline excerpting executes the process against the entire sample and 
+    then excerpts the output.
+* 1 minor enhancement
+  * Processes applied to $SOURCE will be given the actual source path instead of
+    a temp file
+
 == 1.0.0 / 2009-07-06
 
 * 1 major enhancement
