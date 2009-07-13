@@ -106,4 +106,5 @@ Feature: author formats article
     | pipelines.txt     | pipelines.out      |
     | escaping.txt      | escaping.out       |
     | bracketing.rb     | bracketing.out     |
+    | stderr.rb         | stderr.out         |
 
