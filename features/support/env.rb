@@ -16,3 +16,5 @@ def run_germinate(arguments, permit_failure=false)
   @result   = $CHILD_STATUS
   raise "Command `#{command}` failed" unless @result.success? or permit_failure
 end
+
+

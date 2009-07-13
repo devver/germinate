@@ -13,8 +13,6 @@
 
 * TODO Improve error message for non-matching regexen in selectors :usability:
 
-* TODO Optionally capture STDERR from processes             :feature:
-
 * TODO Output line numbers for Reader errors                :usability:
 
 * TODO Gist uploads                                         :feature:
@@ -58,3 +56,16 @@
 * TODO Nested samples                                       :feature:
   Might want to wait this on the implementation of nested states in AlterEgo.
 
+* TODO Optionally capture STDERR from processes             :feature:
+
+  Workaround: Authors can just include 2>&1 in their process definitions.
+
+* DONE Syntax for post-process excerpting
+  CLOSED: [2009-07-12 Sun 20:50]
+  E.g. "$SOURCE|ruby:/---/../---/"
+
+  This would cause the process to be run on $SOURCE and then a subset of the
+  output to be excerpted.
+
+* TODO Named Styles
+  A way to group together a bunch of style attributes in a reusable way.

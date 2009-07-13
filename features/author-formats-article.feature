@@ -107,4 +107,5 @@ Feature: author formats article
     | escaping.txt      | escaping.out       |
     | bracketing.rb     | bracketing.out     |
     | stderr.rb         | stderr.out         |
+    | excerpt_output.rb | excerpt_output.out |
 

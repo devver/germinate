@@ -19,10 +19,13 @@ Then /^the output should look like "([^\"]*)"$/ do |output_file|
 end
 
 Given /^an article with the contents:$/ do |contents|
-  Tempfile.open("germinate_example_article") do |file|
-    file.write(contents)
-    @filename = Pathname(file.path)
+  file = Tempfile.open("germinate_example_article")
+  file.write(contents)
+  file.close
+  at_exit do
+    file.delete
   end
+  @filename   = Pathname(file.path)
 end
 
 Then /^the output should be as follows:$/ do |example_output|

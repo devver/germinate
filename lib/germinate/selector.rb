@@ -9,7 +9,8 @@ class Germinate::Selector
   attr_reader :pipeline
   attr_reader :default_key
 
-  PATTERN = /([@$])?(\w+)?(:([^\s\|]+))?(\|([\w|]+))?/
+  PATTERN = /^([@$])?(\w+)?(:([^\s\|]+))?(\|([\w|]+))?$/
+  EXCERPT_OUTPUT_PATTERN = /^([@$])?(\w+)?(\|([\w|]+))?(:([^\s\|]+))?$/
   EXCERPT_PATTERN = %r{((-?\d+)|(/[^/]*/))(((\.\.\.?)|(,))((-?\d+)|(/[^/]*/)))?}
 
   def initialize(string, default_key)
@@ -17,8 +18,19 @@ class Germinate::Selector
     @default_key = default_key
     match_data = case string
                  when "", nil then {}
-                 else PATTERN.match(string)
+                 else 
+                   if data = PATTERN.match(string) 
+                     @excerpt_output = false
+                   elsif data = EXCERPT_OUTPUT_PATTERN.match(string)
+                     @excerpt_output = true
+                   else
+                     raise "Could not parse selector '#{string}'"
+                   end
+                   data
                  end
+
+    subscript_index = @excerpt_output ? 6 : 3
+    pipeline_index  = @excerpt_output ? 4 : 6
 
     @selector_type = 
       case match_data[1]
@@ -27,9 +39,9 @@ class Germinate::Selector
       else raise "Unknown selector type '#{match_data[1]}'"
       end
     @key = match_data[2] || default_key
-    if match_data[3]
+    if match_data[subscript_index]
       @slice = true
-      parse_excerpt(match_data[3])
+      parse_excerpt(match_data[subscript_index])
     else
       @slice        = false
       @delimiter    = '..'
@@ -37,7 +49,7 @@ class Germinate::Selector
       @end_offset   = -1
       @length       = nil
     end
-    @pipeline = String(match_data[6]).split("|")
+    @pipeline = String(match_data[pipeline_index]).split("|")
   end
 
   def start_offset_for_slice
@@ -46,6 +58,11 @@ class Germinate::Selector
 
   def end_offset_for_slice
     offset_for_slice(end_offset)
+  end
+
+  # Should excerpting be done on the output of the process?
+  def excerpt_output?
+    @excerpt_output
   end
 
   # Is it just a subset of the source hunk? (opposite of @whole?)
