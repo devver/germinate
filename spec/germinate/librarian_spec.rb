@@ -165,6 +165,35 @@ module Germinate
       end
     end
 
+    context "given a new publisher" do
+      before :each do
+        @publisher_name    = "MyPub"
+        @publisher_type    = "shell"
+        @publisher_options = {'foo' => 'bar'}
+        @publisher         = stub("Publisher")
+        Germinate::Publisher.stub!(:make).and_return(@publisher)      
+      end
+
+      it "should construct a new publisher object" do
+        Germinate::Publisher.should_receive(:make).
+          with(@publisher_name, @publisher_type, @it, @publisher_options).
+          and_return(@publisher)
+        @it.add_publisher!(@publisher_name, @publisher_type, @publisher_options)
+      end
+
+      it "should make the new publisher available by name" do
+        @it.add_publisher!(@publisher_name, @publisher_type, @publisher_options)
+        @it.publisher(@publisher_name).should equal(@publisher)
+      end
+
+      it "should raise an error when an unknown publisher is requested" do
+        @it.add_publisher!(@publisher_name, @publisher_type, @publisher_options)
+        lambda do 
+          @it.publisher("foo")
+        end.should raise_error(IndexError)
+      end
+    end
+
     context "given an assortment of lines" do
       before :each do
         @it.add_front_matter!("FM 1")

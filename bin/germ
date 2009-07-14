@@ -53,8 +53,7 @@ Main do
     source_argument
     def run
       with_source_file do |source, path|
-        application = Germinate::Application.new
-        application.format(source, path, $stdout, $stderr)
+        @application.format(source, path)
       end
     end
   end
@@ -62,7 +61,7 @@ Main do
   mode :list do
     description "List various article components"
     source_argument
-    COLLECTIONS = [:sections, :samples, :processes] 
+    COLLECTIONS = [:sections, :samples, :processes, :publishers] 
     COLLECTIONS.each do |collection| 
       option collection do
         description "List all #{collection}"
@@ -76,8 +75,7 @@ Main do
         things_to_list << collection if params[collection].value
       end
       with_source_file do |source, path|
-        application = Germinate::Application.new
-        application.list(source, path, things_to_list, $stdout)
+        @application.list(source, path, things_to_list)
       end
     end
   end
@@ -85,7 +83,7 @@ Main do
   mode :show do
     description "Show details about various article components"
     source_argument
-    TYPES = [:section, :sample, :process] 
+    TYPES = [:section, :sample, :process, :publisher] 
     TYPES.each do |type| 
       option type do
         description "Show details about a #{type}"
@@ -99,8 +97,7 @@ Main do
         sel
       }
       with_source_file do |source, path|
-        application = Germinate::Application.new
-        application.show(source, path, selection, $stdout)
+        @application.show(source, path, selection)
       end
     end
   end
@@ -117,8 +114,7 @@ Main do
 
     def run
       with_source_file do |source, path|
-        application = Germinate::Application.new
-        application.select(source, path, params[:selector].value, $stdout)
+        @application.select(source, path, params[:selector].value)
       end
     end
   end
@@ -130,6 +126,22 @@ Main do
       example = File.expand_path("../doc/examples/basic.rb", 
                                  File.dirname(__FILE__))
       stdout.write(File.read(example))
+    end
+  end
+
+  mode :publish do
+    description "Publish the article using the named publisher"
+    argument :publisher
+    source_argument
+    option 'publish-options' do
+      arity 1
+    end
+
+    def run
+      with_source_file do |source, path|
+        options = YAML.load(params['publish-options'].value || "{}")
+        @application.publish(source, path, params[:publisher].value, options)
+      end
     end
   end
 
@@ -147,6 +159,7 @@ Main do
               end
       lines.map{|l| "#{severity} -- #{progname}: #{l}"}.join("\n") + "\n"
     }
+    @application = Germinate::Application.new(stdout, stderr)
   end
 
   def pre_parse_parameters

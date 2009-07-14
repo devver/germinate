@@ -1,5 +1,6 @@
 require 'orderedhash'
 require 'fattr'
+require 'mash'
 require File.expand_path("shared_style_attributes", File.dirname(__FILE__))
 
 # The Librarian is responsible for organizing all the chunks of content derived
@@ -29,6 +30,7 @@ class Germinate::Librarian
       hash[key] = Germinate::CodeHunk.new([], shared_style_attributes)
     end
     @processes = {}
+    @publishers = OrderedHash.new
   end
 
   def add_front_matter!(line)
@@ -67,6 +69,10 @@ class Germinate::Librarian
     @processes[process_name] = Germinate::Process.new(process_name, command)
   end
 
+  def add_publisher!(name, identifier, options)
+    @publishers[name] = Germinate::Publisher.make(name, identifier, self, options)
+  end
+
   def comment_prefix_known?
     !comment_prefix.nil?
   end
@@ -102,6 +108,13 @@ class Germinate::Librarian
 
   def process_names
     @processes.keys
+  end
+
+  # fetch a publisher by name
+  def publisher(publisher_name)
+    @publishers.fetch(publisher_name)
+  rescue IndexError => error
+    raise error.exception("Unknown publisher #{publisher_name.inspect}")
   end
 
   def has_sample?(sample_name)

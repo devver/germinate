@@ -325,5 +325,17 @@ module Germinate
       end
     end
 
+    context  "given a publisher directive" do
+      before :each do
+        @line = ' # :PUBLISHER: source, shell, { command: "cat %f" }'
+      end
+
+      it "should add the publisher to the librarian" do
+        @librarian.should_receive(:add_publisher!).
+          with("source", "shell", { :command => "cat %f" })
+        @it << @line
+      end
+    end
+
   end
 end 

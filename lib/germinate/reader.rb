@@ -123,9 +123,10 @@ class Germinate::Reader
       when "END"    then end_control_line!(*arguments)
       when "INSERT" then insert_control_line!(*arguments)
       when "BRACKET_CODE" then bracket_code_control_line!(*arguments)
-      when "PROCESS" then process_control_line!(*arguments) 
+      when "PROCESS" then process_control_line!(*arguments)
+      when "PUBLISHER" then publisher_control_line!(*arguments)
       else 
-        @log.warn "Ignoring unknown directive #{keyword} at line #{@line_number}"
+        log.warn "Ignoring unknown directive #{keyword} at line #{@line_number}"
       end
       librarian.add_control!(line)
       true
@@ -175,6 +176,10 @@ class Germinate::Reader
     librarian.add_process!(process_name, command)
   end
 
+  def publisher_control_line!(name, type, options)
+    librarian.add_publisher!(name, type, symbolize_keys(options))
+  end
+
   def sample_name=(name)
     self.current_section = name
   end
@@ -219,5 +224,20 @@ class Germinate::Reader
         attributes[:code_close_bracket] = options.fetch("brackets").last
       end
     end
+  end
+
+  def symbolize_keys(hash)
+    hash.inject({}){|result, (key, value)|
+      new_key = case key
+                when String then key.to_sym
+                else key
+                end
+      new_value = case value
+                  when Hash then symbolize_keys(value)
+                  else value
+                  end
+      result[new_key] = new_value
+      result
+    }
   end
 end

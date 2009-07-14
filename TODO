@@ -16,6 +16,8 @@
 
 * TODO Output line numbers for Reader errors                :usability:
 
+* TODO "Execute" command
+
 * TODO Gist uploads                                         :feature:
 
 * TODO Publishing to WordPress blogs (Atompub)              :feature:
@@ -61,12 +63,13 @@
 
   Workaround: Authors can just include 2>&1 in their process definitions.
 
-* DONE Syntax for post-process excerpting
+* DONE Syntax for post-process excerpting                   :feature:
   CLOSED: [2009-07-12 Sun 20:50]
   E.g. "$SOURCE|ruby:/---/../---/"
 
   This would cause the process to be run on $SOURCE and then a subset of the
   output to be excerpted.
 
-* TODO Named Styles
+* TODO Named Styles                                         :feature:
   A way to group together a bunch of style attributes in a reusable way.
+* TODO A way to set arbitrary variables for later substitution :feature:

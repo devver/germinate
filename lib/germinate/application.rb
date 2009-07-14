@@ -3,10 +3,15 @@
 class Germinate::Application
   attr_writer :formatter
 
-  def format(source, path, output=$stdout, errors=$stderr)
+  def initialize(output, errors)
+    @output       = output
+    @error_output = errors
+  end
+
+  def format(source, path)
     librarian = load_librarian(source, path)
     editor    = Germinate::ArticleEditor.new(librarian)
-    formatter = Germinate::ArticleFormatter.new(output)
+    formatter = Germinate::ArticleFormatter.new(@output)
 
     Germinate::SharedStyleAttributes.fattrs.each do 
       |style_attribute|
@@ -19,36 +24,48 @@ class Germinate::Application
     formatter.finish!
   end
 
-  def list(source, path, things_to_list, output=$stdout)
+  def list(source, path, things_to_list)
     librarian = load_librarian(source, path)
     if things_to_list.include?(:sections)
-      output.puts(librarian.section_names.join("\n"))
+      @output.puts(librarian.section_names.join("\n"))
     end
     if things_to_list.include?(:samples)
-      output.puts(librarian.sample_names.join("\n"))
+      @output.puts(librarian.sample_names.join("\n"))
     end
     if things_to_list.include?(:processes)
-      output.puts(librarian.process_names.join("\n"))
+      @output.puts(librarian.process_names.join("\n"))
+    end
+    if things_to_list.include?(:publishers)
+      @output.puts(*librarian.publisher_names)
     end
   end
 
-  def show(source, path, selection, output=$stdout)
+  def show(source, path, selection)
     librarian = load_librarian(source, path)
     selection.fetch(:section, []).each do |section|
-      output.puts(*librarian.section(section))
+      @output.puts(*librarian.section(section))
     end
     selection.fetch(:sample, []).each do |sample|
-      output.puts(*librarian.sample(sample))
+      @output.puts(*librarian.sample(sample))
     end
     selection.fetch(:process, []).each do |process|
-      output.puts(*librarian.process(process).command)
+      @output.puts(*librarian.process(process).command)
+    end
+    selection.fetch(:publisher, []).each do |publisher|
+      @output.puts(*librarian.publisher(publisher))
     end
   end
 
-  def select(source, path, selector, output=$stdout, origin="select command")
+  def select(source, path, selector, origin="select command")
     librarian = load_librarian(source, path)
-    output.puts(*librarian[selector, origin])
+    @output.puts(*librarian[selector, origin])
   end
+
+  def publish(source, path, publisher, options={})
+    librarian = load_librarian(source, path)
+    librarian.publisher(publisher).publish!(@output, options)
+  end
+
   private
 
   def load_librarian(source, path)

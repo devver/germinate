@@ -65,7 +65,7 @@ class Germinate::Process
   end
 
   def log_popen(command, mode, &block)
-    log.debug "Running command '#{command}'"
+    log.debug "Running command `#{command}`"
     IO.popen(command, mode, &block)
     status = $CHILD_STATUS
     unless status.success?
