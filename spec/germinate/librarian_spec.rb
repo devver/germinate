@@ -134,8 +134,14 @@ module Germinate
       before :each do 
         @output_a  = ["line 1a", "line 2a"]
         @output_b  = ["line 1b", "line 2b"]
-        @process_a = stub("Process A", :call => @output_a)
-        @process_b = stub("Process B", :call => @output_b)
+        @process_a = stub("Process A", 
+          :call => @output_a,
+          :name => "foo",
+          :command => "aaa")
+        @process_b = stub("Process B", 
+          :call => @output_b,
+          :name => "bar",
+          :command => "bbb")
         Germinate::Process.stub!(:new).
           with("foo", "aaa").
           and_return(@process_a)
@@ -161,6 +167,37 @@ module Germinate
             and_return(@output_b)
 
           @it[@selector].should == ["line 1b", "line 2b"]
+        end
+      end
+
+      context "when asked to make a pipeline of the two processes" do
+        before :each do
+          @pipeline = @it.make_pipeline("bar|foo")
+        end
+
+        it "should return a Pipeline object" do
+          @pipeline.should be_a_kind_of(Germinate::Pipeline)
+        end
+
+        it "should return a two-process pipeline" do
+          @pipeline.should have(2).processes
+        end
+
+        it "should include the named processes in the pipeline" do
+          @pipeline.processes[0].name.should == "bar"
+          @pipeline.processes[0].command.should == "bbb"
+          @pipeline.processes[1].name.should == "foo"
+          @pipeline.processes[1].command.should == "aaa"
+        end
+      end
+
+      context "when asked to make an empty pipeline" do
+        before :each do
+          @pipeline = @it.make_pipeline("")
+        end
+
+        it "should return an empty pipeline" do
+          @pipeline.should have(0).processes
         end
       end
     end

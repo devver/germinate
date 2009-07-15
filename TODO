@@ -40,6 +40,7 @@
 * TODO Format Pipelines                                     :feature:
   Define a pipeline to be run on the entire article after formatting
 
+  Or maybe just demote "format" to be a built-in publisher.
 * TODO ERB Substitution                                     :feature:
   Should be run on TEXT sections.
 
@@ -47,8 +48,6 @@
   A helper for ERB subtitution which inserts the line# of a given selector.
 
 * TODO Plugin API                                           :feature:
-  Should use gems to discover plugins.
-
 * TODO User-global preference file                          :feature:
 
 * TODO Multiple file support                                :feature:
@@ -73,3 +72,10 @@
 * TODO Named Styles                                         :feature:
   A way to group together a bunch of style attributes in a reusable way.
 * TODO A way to set arbitrary variables for later substitution :feature:
+* DONE Standard "pipeline" option for publishers
+  CLOSED: [2009-07-15 Wed 01:32]
+  Defines a pipeline which will be run on $SOURCE before publishing.
+* TODO Plugin discovery
+  Should use gems to discover plugins.
+
+* TODO Line continuations for directives

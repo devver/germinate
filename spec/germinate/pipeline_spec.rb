@@ -21,4 +21,14 @@ module Germinate
       @it.call(@input).should == @output3
     end
   end
+
+  describe Pipeline, "given no processes" do
+    before :each do
+      @it = Pipeline.new([])
+     end
+    
+    it "should pass input through unchanged" do
+      @it.call(["foo", "bar"]).should == ["foo", "bar"]
+    end
+  end
 end

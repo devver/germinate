@@ -47,7 +47,7 @@ module Germinate
     context "given name, librarian, and options" do
       before :each do
         @name = "frank"
-        @librarian = stub("Librarian")
+        @librarian = stub("Librarian").as_null_object
         @options   = {:foo => "bar"}
         @it = Publisher.new(@name, @librarian, @options)
       end
@@ -62,6 +62,24 @@ module Germinate
 
       it "should know its options" do
         @it.options.should == @options
+      end
+    end
+
+    context "given a pipeline option" do
+      before :each do
+        @name = "frank"
+        @librarian = stub("Librarian").as_null_object
+        @options   = {:pipeline => "foo|bar"}
+      end
+
+      it "should have a pipeline" do
+        @it = Publisher.new(@name, @librarian, @options)
+        @it.pipeline.should_not be_nil
+      end
+
+      it "should use the librarian to construct a pipeline" do
+        @librarian.should_receive(:make_pipeline).with("foo|bar")
+        @it = Publisher.new(@name, @librarian, @options)
       end
     end
   end

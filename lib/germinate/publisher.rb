@@ -8,6 +8,9 @@ class Germinate::Publisher
   fattr :librarian
   fattr :options
 
+  fattr(:pipeline) 
+  fattr(:log) { Germinate.logger }
+
   @registered_publishers = {}
 
   def self.make(name, identifier, librarian, options)
@@ -34,5 +37,18 @@ class Germinate::Publisher
     self.name      = name
     self.librarian = librarian
     self.options   = options
+    self.pipeline  = librarian.make_pipeline(options.delete(:pipeline){""})
+
+    # All options should have been removed by this point
+    options.keys.each do |key|
+      log.warn "Unknown publisher option '#{key}'"
+    end
+  end
+
+  private
+
+  def input
+    source = librarian["$SOURCE", "publish #{name} command"]
+    pipeline.call(source)
   end
 end

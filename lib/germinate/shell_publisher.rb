@@ -1,9 +1,17 @@
 class Germinate::ShellPublisher < Germinate::Publisher
   identifier 'shell'
 
+  def initialize(name, librarian, options)
+    @command = options.delete(:command) do
+      raise ArgumentError, 
+            "A 'command' option must be supplied for publisher type 'shell'"
+    end
+    super
+  end
+
   def publish!(output, extra_options={})
-    process = Germinate::Process.new(name, options.fetch(:command))
-    processed = process.call(librarian["$SOURCE", "publish #{name} command"])
+    process = Germinate::Process.new(name, @command)
+    processed = process.call(input)
     processed.each do |line|
       output.print(line)
     end

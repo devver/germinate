@@ -5,7 +5,9 @@ module Germinate
   describe ShellPublisher do
     before :each do
       @name = "frank"
-      @librarian = stub("Librarian")
+      @pipeline_output = ["* line 1\n", "* line 2\n"]
+      @pipeline  = stub("Pipeline", :call => @pipeline_output)
+      @librarian = stub("Librarian", :make_pipeline => @pipeline)
       @command   = "cat %f"
       @options   = {:command => @command}
       @it = ShellPublisher.new(@name, @librarian, @options)
@@ -35,8 +37,8 @@ module Germinate
         @it.publish!(@output)
       end
 
-      it "should pass the source file hunk to the created process" do
-        @process.should_receive(:call).with(@source).and_return(@result)
+      it "should pass the pipeline output to the created process" do
+        @process.should_receive(:call).with(@pipeline_output).and_return(@result)
         @it.publish!(@output)
       end
 

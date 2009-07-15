@@ -1,6 +1,5 @@
 require 'orderedhash'
 require 'fattr'
-require 'mash'
 require File.expand_path("shared_style_attributes", File.dirname(__FILE__))
 
 # The Librarian is responsible for organizing all the chunks of content derived
@@ -167,6 +166,20 @@ class Germinate::Librarian
     @samples.keys
   end
 
+  # Given a list of process names or a '|'-delimited string, return a Pipeline
+  # object representing a super-process of all the named processes chained
+  # together.
+  def make_pipeline(process_names_or_string)
+    names = 
+      if process_names_or_string.kind_of?(String)
+        process_names_or_string.split("|")
+      else
+        process_names_or_string
+      end
+    processes = names.map{|n| process(n)}
+    Germinate::Pipeline.new(processes)
+  end
+
   private
 
   def add_line!(line)
@@ -203,8 +216,7 @@ class Germinate::Librarian
     end
   end
 
-  def execute_pipeline(hunk, process_names)
-    processes = process_names.map{|n| process(n)}
-    Germinate::Pipeline.new(processes).call(hunk)
+  def execute_pipeline(hunk, names)
+    make_pipeline(names).call(hunk)
   end
 end

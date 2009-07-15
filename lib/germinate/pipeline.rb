@@ -1,4 +1,6 @@
 class Germinate::Pipeline
+  attr_reader :processes
+
   def initialize(processes)
     @processes = processes
   end
