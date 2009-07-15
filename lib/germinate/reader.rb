@@ -125,6 +125,7 @@ class Germinate::Reader
       when "BRACKET_CODE" then bracket_code_control_line!(*arguments)
       when "PROCESS" then process_control_line!(*arguments)
       when "PUBLISHER" then publisher_control_line!(*arguments)
+      when "SET"    then set_control_line!(*arguments)
       else 
         log.warn "Ignoring unknown directive #{keyword} at line #{@line_number}"
       end
@@ -178,6 +179,10 @@ class Germinate::Reader
 
   def publisher_control_line!(name, type, options)
     librarian.add_publisher!(name, type, symbolize_keys(options))
+  end
+
+  def set_control_line!(name, value)
+    librarian.set_variable!(name, value)
   end
 
   def sample_name=(name)

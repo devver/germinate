@@ -9,14 +9,39 @@ module Germinate
         :comment_prefix => "//")
       @output  = ["1 enil\n", "2 enil\n"]
       @command = stub("Command", :readlines => @output).as_null_object
+      @tempfile = stub("Temp File", :path => "TEMP_PATH").as_null_object
+      @status   = stub("Child Status", :success => true)
       IO.stub!(:popen).and_yield(@command)
+      Tempfile.stub!(:open).and_yield(@tempfile)
+    end
+
+    context "given a command and some variables" do
+      before :each do
+        @it = Germinate::Process.new(
+          "myproc", "mycommand", { "FOO" => 123, "BAR" => 456 })
+        ENV["FOO"] = "xxx"
+      end
+
+      it "should set the variables in the environment before execution" do
+        IO.should_receive(:popen) do
+          ENV["FOO"].should == "123"
+          ENV["BAR"].should == "456"
+        end
+        @it.call(@input)
+      end
+
+      it "should reset the environment after execution" do
+        @it.call(@input)
+        ENV["FOO"].should == "xxx"
+        ENV["BAR"].should be_nil
+      end
     end
 
     context "given a command 'mycommand'" do
       before :each do
         @it = Germinate::Process.new("myproc", "mycommand")
       end
-      
+
       context "when called on a hunk of text" do
         it "should pipe the input through the command" do
           @command.should_receive(:<<).with("line 1\n").ordered
@@ -33,6 +58,7 @@ module Germinate
           output = @it.call(@input)
           output.comment_prefix.should == "//"
         end
+
       end
     end
 
@@ -42,7 +68,6 @@ module Germinate
       end
 
       it "should create a temporary file and pass the name to the command" do
-        @tempfile = stub("Temp File", :path => "TEMP_PATH")
         Tempfile.should_receive(:open).with("germinate_hunk").and_yield(@tempfile)
         @tempfile.should_receive(:<<).with("line 1\n").ordered
         @tempfile.should_receive(:<<).with("line 2\n").ordered

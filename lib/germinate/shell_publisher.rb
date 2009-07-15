@@ -10,7 +10,7 @@ class Germinate::ShellPublisher < Germinate::Publisher
   end
 
   def publish!(output, extra_options={})
-    process = Germinate::Process.new(name, @command)
+    process = Germinate::Process.new(name, @command, librarian.variables)
     processed = process.call(input)
     processed.each do |line|
       output.print(line)

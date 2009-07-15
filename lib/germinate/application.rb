@@ -1,3 +1,5 @@
+require 'English'
+
 # The Application ties all the other componts together.  It has public methods
 # roughly corresponding commands that the 'germ' command-line tool supports.
 class Germinate::Application
@@ -6,6 +8,19 @@ class Germinate::Application
   def initialize(output, errors)
     @output       = output
     @error_output = errors
+  end
+
+  # Search Rubygems for Germinate plugins and load them
+  def load_plugins!
+    Gem.find_files('germinate_plugin_v0_init').each do |file|
+      Kernel.load(file)
+    end
+    $LOAD_PATH.each do |dir|
+      plugin_init = Pathname(dir) + 'germinate_plugin_v0_init.rb'
+      if plugin_init.readable?
+        Kernel.load(plugin_init)
+      end
+    end
   end
 
   def format(source, path)
@@ -37,6 +52,11 @@ class Germinate::Application
     end
     if things_to_list.include?(:publishers)
       @output.puts(*librarian.publisher_names)
+    end
+    if things_to_list.include?(:variables)
+      librarian.variables.each_pair do |name, value|
+        @output.puts("%-20s %s" % [name, value])
+      end
     end
   end
 

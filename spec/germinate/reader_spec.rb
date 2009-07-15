@@ -337,5 +337,17 @@ module Germinate
       end
     end
 
+    context "given a set directive" do
+      before :each do
+        @line = ' # :SET: name, value'
+      end
+
+      it "should set a variable on the librarian" do
+        @librarian.should_receive(:set_variable!).
+          with("name", "value")
+        @it << @line
+      end
+    end
+
   end
 end 

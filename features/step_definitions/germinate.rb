@@ -31,3 +31,12 @@ end
 Then /^the output should be as follows:$/ do |example_output|
   @output.strip.should == example_output.strip
 end
+
+Then /^the article contents should be:$/ do |contents|
+  @filename.read.should == contents
+end
+
+Then /^the article backup contents should be:$/ do |contents|
+  Pathname(@filename.to_s + ".germ.bak").read.should == contents
+end
+

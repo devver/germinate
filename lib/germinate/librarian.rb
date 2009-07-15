@@ -16,6 +16,7 @@ class Germinate::Librarian
   fattr         :source_path => nil
 
   fattr(:log) { Germinate.logger }
+  fattr(:variables) { OrderedHash.new }
 
   def initialize
     @lines              = []
@@ -65,11 +66,16 @@ class Germinate::Librarian
   end
 
   def add_process!(process_name, command)
-    @processes[process_name] = Germinate::Process.new(process_name, command)
+    @processes[process_name] = 
+      Germinate::Process.new(process_name, command, variables)
   end
 
   def add_publisher!(name, identifier, options)
     @publishers[name] = Germinate::Publisher.make(name, identifier, self, options)
+  end
+
+  def set_variable!(name, value)
+    variables[name] = value
   end
 
   def comment_prefix_known?

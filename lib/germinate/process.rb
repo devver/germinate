@@ -8,12 +8,14 @@ require 'main'
 class Germinate::Process
   attr_reader :name
   attr_reader :command
+  attr_reader :variables
 
   fattr(:log) { Germinate.logger }
 
-  def initialize(name, command)
-    @name    = name
-    @command = command
+  def initialize(name, command, variables={})
+    @name      = name
+    @command   = command
+    @variables = variables
   end
 
   def call(input)
@@ -66,10 +68,27 @@ class Germinate::Process
 
   def log_popen(command, mode, &block)
     log.debug "Running command `#{command}`"
-    IO.popen(command, mode, &block)
+    with_environment_variables(@variables) do
+      IO.popen(command, mode, &block)
+    end
     status = $CHILD_STATUS
-    unless status.success?
+    unless status.nil? ||status.success? 
       log.warn "Command '#{command}' exited with status #{status}"
+    end
+  end
+
+  def with_environment_variables(variables)
+    old_values = variables.inject({}) do |original, (name, value)| 
+      original[name.to_s] = ENV[name.to_s]
+      ENV[name.to_s] = value.to_s
+      original
+    end
+    yield
+  ensure
+    old_values.each_pair do |name, value|
+      if value.nil? then ENV.delete(name)
+      else ENV[name] = value
+      end
     end
   end
 end

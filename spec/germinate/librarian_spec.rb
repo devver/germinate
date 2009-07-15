@@ -128,6 +128,10 @@ module Germinate
       it "should include the process when listing known processes" do
         @it.process_names.should include("myproc")
       end
+
+      it "should give the process a reference to the librarians variables" do
+        @it.process("myproc").variables.should equal(@it.variables)
+      end
     end
 
     context "given a code sample and some processes" do
@@ -143,10 +147,10 @@ module Germinate
           :name => "bar",
           :command => "bbb")
         Germinate::Process.stub!(:new).
-          with("foo", "aaa").
+          with("foo", "aaa", {}).
           and_return(@process_a)
         Germinate::Process.stub!(:new).
-          with("bar", "bbb").
+          with("bar", "bbb", {}).
           and_return(@process_b)
 
         @it.add_code!("A", "line 1")
@@ -230,6 +234,28 @@ module Germinate
         end.should raise_error(IndexError)
       end
     end
+
+    context "given a variable setting" do
+      before :each do
+        @it.set_variable!("FOO", "123")
+      end
+
+      it "should add a variable with the given name and value" do
+        @it.variables["FOO"].should == "123"
+      end
+    end
+
+    context "given a variable setting when the variable already has a value" do
+      before :each do
+        @it.set_variable!("FOO", "123")
+        @it.set_variable!("FOO", "456")
+      end
+
+      it "should replace the old variable value with the new one" do
+        @it.variables["FOO"].should == "456"
+      end
+    end
+
 
     context "given an assortment of lines" do
       before :each do

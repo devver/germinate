@@ -7,7 +7,10 @@ module Germinate
       @name = "frank"
       @pipeline_output = ["* line 1\n", "* line 2\n"]
       @pipeline  = stub("Pipeline", :call => @pipeline_output)
-      @librarian = stub("Librarian", :make_pipeline => @pipeline)
+      @variables = stub("Variables")
+      @librarian = stub("Librarian", 
+        :make_pipeline => @pipeline,
+        :variables     => @variables)
       @command   = "cat %f"
       @options   = {:command => @command}
       @it = ShellPublisher.new(@name, @librarian, @options)
@@ -24,11 +27,11 @@ module Germinate
         @process = stub("Process", :call => @result).as_null_object
         @source  = stub("Source").as_null_object
         @librarian.stub!(:[]).and_return(@source)
-        Process.stub!(:new).with(@name, @command).and_return(@process)
+        Process.stub!(:new).and_return(@process)
       end
       
       it "should create a new process" do
-        Process.should_receive(:new).with(@name, @command)
+        Process.should_receive(:new).with(@name, @command, @variables)
         @it.publish!(@output)
       end
 

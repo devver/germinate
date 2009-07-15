@@ -61,7 +61,7 @@ Main do
   mode :list do
     description "List various article components"
     source_argument
-    COLLECTIONS = [:sections, :samples, :processes, :publishers] 
+    COLLECTIONS = [:sections, :samples, :processes, :publishers, :variables] 
     COLLECTIONS.each do |collection| 
       option collection do
         description "List all #{collection}"
@@ -141,6 +141,25 @@ Main do
       with_source_file do |source, path|
         options = YAML.load(params['publish-options'].value || "{}")
         @application.publish(source, path, params[:publisher].value, options)
+      end
+    end
+  end
+
+  mode :set do
+    description "Set a named value in the article"
+    argument :name do
+      description "Variable name"
+      cast :string
+    end
+    argument :value do
+      description "Variable value"
+      cast :string
+    end
+    source_argument
+
+    def run
+      with_source_file do |source, path|
+        @application.set(params[:name].value, params[:value].value)
       end
     end
   end

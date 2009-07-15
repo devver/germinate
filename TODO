@@ -72,10 +72,36 @@
 * TODO Named Styles                                         :feature:
   A way to group together a bunch of style attributes in a reusable way.
 * TODO A way to set arbitrary variables for later substitution :feature:
-* DONE Standard "pipeline" option for publishers
+* DONE Standard "pipeline" option for publishers            :feature:
   CLOSED: [2009-07-15 Wed 01:32]
   Defines a pipeline which will be run on $SOURCE before publishing.
-* TODO Plugin discovery
+* TODO Plugin discovery                                     :feature:
   Should use gems to discover plugins.
 
-* TODO Line continuations for directives
+* TODO Line continuations for directives                    :usability:
+  After some thought I think what I really want is a second syntax for long-form
+  directives, wherein the YAML arguments go in between directive opening and
+  closing lines.  E.g.
+
+  : # :PUBLISHER: ---
+  : # - source
+  : # - shell
+  : # - 
+  : #   command: cat
+  : #   pipeline: markdown
+  : # :END:
+* TODO Variables
+  Syntax:
+  : :SET: foo, 123
+*** Reader records what line they were set on
+*** SourceFile class which can set and re-set variables
+    - Backs the file up first
+    - Verifies the backup
+    - Locks the file and the backup
+    - Removes the old line
+    - Replaces it with a new :SET: line
+    - Or adds a new :SET: line to the end
+    - Re-reads and verifies value
+    - Restores the backup if there is a problem
+    
+*** Variables are available to processes as environment vars
