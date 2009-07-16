@@ -58,7 +58,7 @@ Feature: author sets variables
     When I run the command "germ set FOO 456 --debug" on the article
     Then the article contents should be:
     """
-    # :PUBLISHER: env, shell, { command: 'echo $FOO' }
+    # :PUBLISHER: env, shell, { command: 'echo %f > /dev/null; echo $FOO' }
     # :TEXT:
     # This is some text
     # :SET: FOO, 456

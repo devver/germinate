@@ -55,7 +55,7 @@ class Germinate::Application
     end
     if things_to_list.include?(:variables)
       librarian.variables.each_pair do |name, value|
-        @output.puts("%-20s %s" % [name, value])
+        @output.puts("%-20s %s" % [name, value.to_s])
       end
     end
   end
@@ -84,6 +84,12 @@ class Germinate::Application
   def publish(source, path, publisher, options={})
     librarian = load_librarian(source, path)
     librarian.publisher(publisher).publish!(@output, options)
+  end
+
+  def set(source, path, name, value)
+    librarian = load_librarian(source, path)
+    librarian.variables[name] = value
+    librarian.store_changes!
   end
 
   private

@@ -8,6 +8,38 @@ require File.expand_path("shared_style_attributes", File.dirname(__FILE__))
 class Germinate::Librarian
   include Germinate::SharedStyleAttributes
 
+  class VariableStore < OrderedHash
+    def initialize(librarian)
+      super()
+      @librarian = librarian
+    end
+
+    def []=(key, value)
+      if key?(key)
+        variable = fetch(key)
+        variable.replace(value.to_s)
+        variable.update_source_line!(@librarian.comment_prefix)
+      else
+        variable = 
+          case value
+          when Germinate::Variable
+            value
+          else
+            line_number = @librarian.lines.length + 1
+            line        = ""
+            Germinate::Variable.new(
+              key, value, line, @librarian.source_path, line_number)
+          end
+        variable.update_source_line!(@librarian.comment_prefix)
+        store(key, variable)
+        @librarian.log.debug "Appending #{variable.line.inspect} to lines"
+        @librarian.lines << variable.line
+      end
+      @librarian.updated = true
+    end
+
+  end
+    
   attr_reader   :lines
   attr_reader   :text_lines
   attr_reader   :code_lines
@@ -16,7 +48,9 @@ class Germinate::Librarian
   fattr         :source_path => nil
 
   fattr(:log) { Germinate.logger }
-  fattr(:variables) { OrderedHash.new }
+  fattr(:variables) { VariableStore.new(self) }
+  fattr(:updated) { false }
+  fattr(:source_file) { Germinate::SourceFile.new(source_path) }
 
   def initialize
     @lines              = []
@@ -74,8 +108,12 @@ class Germinate::Librarian
     @publishers[name] = Germinate::Publisher.make(name, identifier, self, options)
   end
 
-  def set_variable!(name, value)
-    variables[name] = value
+  def store_changes!
+    source_file.write!(lines)
+  end
+
+  def set_variable!(line, line_number, name, value)
+    variables.store(name,Germinate::Variable.new(name, value, line, source_path, line_number))
   end
 
   def comment_prefix_known?

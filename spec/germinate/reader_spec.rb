@@ -344,7 +344,7 @@ module Germinate
 
       it "should set a variable on the librarian" do
         @librarian.should_receive(:set_variable!).
-          with("name", "value")
+          with(@line, 1, "name", "value")
         @it << @line
       end
     end

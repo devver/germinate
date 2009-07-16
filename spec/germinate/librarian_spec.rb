@@ -235,20 +235,33 @@ module Germinate
       end
     end
 
-    context "given a variable setting" do
+    context "given a variable directive" do
       before :each do
-        @it.set_variable!("FOO", "123")
+        @line = " :SET: FOO, 123"
+        @it.set_variable!(@line, 111, "FOO", "123")
       end
 
       it "should add a variable with the given name and value" do
         @it.variables["FOO"].should == "123"
       end
+
+      it "should set the variables line to the given value" do
+        @it.variables["FOO"].line.should equal(@line)
+      end
+
+      it "should set the variables line_number to the given value" do
+        @it.variables["FOO"].origin.line_number.should == 111
+      end
+
+      it "should set the variables source path to its own source path" do
+        @it.variables["FOO"].origin.source_path.to_s.should == "SOURCE_PATH"
+      end
     end
 
     context "given a variable setting when the variable already has a value" do
       before :each do
-        @it.set_variable!("FOO", "123")
-        @it.set_variable!("FOO", "456")
+        @it.set_variable!(" :SET: FOO, 123", 1, "FOO", "123")
+        @it.set_variable!(" :SET: FOO, 456", 1, "FOO", "456")
       end
 
       it "should replace the old variable value with the new one" do
@@ -256,6 +269,89 @@ module Germinate
       end
     end
 
+    context "setting a new variable" do
+      before :each do
+        @it.add_text!("a", " # some text")
+        @it.comment_prefix = " # "
+        @it.variables["FOO"] = 123
+      end
+
+      it "should add a new line" do
+        @it.lines.last.should == " # :SET: 'FOO', '123'\n"
+      end
+
+      it "should set the variable to reference the new line" do
+        @it.variables["FOO"].line.should equal(@it.lines.last)
+      end
+
+      it "should set the line number for the new line" do
+        @it.variables["FOO"].origin.line_number.should == 2
+      end
+
+      it "should set the variable's source file to its own" do
+        @it.variables["FOO"].origin.source_path.should == "SOURCE_PATH"
+      end
+
+      it "should set the variable's value as a string" do 
+        @it.variables["FOO"].should == "123"
+      end
+    
+      it "should set the updatad flag" do
+        @it.should be_updated
+      end
+    end
+
+    context "setting an existing variable" do
+      before :each do
+        @it.comment_prefix = " # "
+        @it.variables["FOO"] = 123
+        @it.add_text!("a", " # some text")
+        @it.updated = false
+        @it.variables["FOO"] = 456
+      end
+
+      it "should not add a new line" do
+        @it.should have(2).lines
+      end
+
+      it "should point to an already existing line" do
+        @it.variables["FOO"].line.should equal(@it.lines.first)
+      end
+
+      it "should keep variable line number" do
+        @it.variables["FOO"].origin.line_number.should == 1
+      end
+
+      it "should keep variable source path" do
+        @it.variables["FOO"].origin.source_path.should == "SOURCE_PATH"
+      end
+
+      it "should update the variable's value" do 
+        @it.variables["FOO"].should == "456"
+      end
+    
+      it "should set the updatad flag" do
+        @it.should be_updated
+      end
+
+      it "should update the source line with a new directive" do
+        @it.lines.first.should == " # :SET: 'FOO', '456'\n"
+      end
+    end
+
+    context "storing changes" do
+      before :each do
+        @it.add_text!("A", "Line 1")
+        @it.add_text!("B", "Line 2")
+        @source_file = stub("Source File")
+        @it.source_file = @source_file
+      end
+
+      it "should send all lines to the source file object to be written" do
+        @source_file.should_receive(:write!).with(["Line 1", "Line 2"])
+        @it.store_changes!
+      end
+    end
 
     context "given an assortment of lines" do
       before :each do

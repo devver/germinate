@@ -78,14 +78,14 @@ class Germinate::Process
   end
 
   def with_environment_variables(variables)
-    old_values = variables.inject({}) do |original, (name, value)| 
+    old_values = variables.inject({}) do |original, (name, variable)| 
       original[name.to_s] = ENV[name.to_s]
-      ENV[name.to_s] = value.to_s
+      ENV[name.to_s] = variable.to_s
       original
     end
     yield
   ensure
-    old_values.each_pair do |name, value|
+    (old_values || {}).each_pair do |name, value|
       if value.nil? then ENV.delete(name)
       else ENV[name] = value
       end

@@ -61,7 +61,7 @@ class Germinate::Reader
     @librarian       = librarian
     @section_count   = 0
     @current_section = "SECTION0"
-    @line_number     = 1
+    @line_number     = 0
     @source_path     = source_path ? Pathname(source_path) : nil
     librarian.source_path = @source_path
   end
@@ -125,7 +125,7 @@ class Germinate::Reader
       when "BRACKET_CODE" then bracket_code_control_line!(*arguments)
       when "PROCESS" then process_control_line!(*arguments)
       when "PUBLISHER" then publisher_control_line!(*arguments)
-      when "SET"    then set_control_line!(*arguments)
+      when "SET"    then set_control_line!(line, *arguments)
       else 
         log.warn "Ignoring unknown directive #{keyword} at line #{@line_number}"
       end
@@ -181,8 +181,8 @@ class Germinate::Reader
     librarian.add_publisher!(name, type, symbolize_keys(options))
   end
 
-  def set_control_line!(name, value)
-    librarian.set_variable!(name, value)
+  def set_control_line!(line, name, value)
+    librarian.set_variable!(line, @line_number, name, value)
   end
 
   def sample_name=(name)

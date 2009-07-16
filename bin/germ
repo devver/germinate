@@ -159,7 +159,11 @@ Main do
 
     def run
       with_source_file do |source, path|
-        @application.set(params[:name].value, params[:value].value)
+        @application.set(
+          source, 
+          path, 
+          params[:name].value, 
+          params[:value].value)
       end
     end
   end
