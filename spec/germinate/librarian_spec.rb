@@ -165,7 +165,7 @@ module Germinate
         end
 
         it "should call the processes on the selected text" do
-          @process_a.should_receive(:call).with(["line 1", "line 2"]).
+          @process_a.should_receive(:call).with(["line 1\n", "line 2\n"]).
             and_return(@output_a)
           @process_b.should_receive(:call).with(@output_a).
             and_return(@output_b)
@@ -348,7 +348,7 @@ module Germinate
       end
 
       it "should send all lines to the source file object to be written" do
-        @source_file.should_receive(:write!).with(["Line 1", "Line 2"])
+        @source_file.should_receive(:write!).with(["Line 1\n", "Line 2\n"])
         @it.store_changes!
       end
     end
@@ -373,69 +373,69 @@ module Germinate
 
       it "should be able to retrieve all the lines in order" do
         @it.lines.should == [
-          "FM 1",
-          "FM 2",
-          "CONTROL 1",
-          "TEXT 1",
-          "TEXT 2",
-          "CONTROL 2",
-          "CODE 1",
-          "CONTROL 3",
-          "TEXT 3",
-          "TEXT 4",
-          "CODE 2",
-          "CODE 2l2",
-          "CODE 2l3",
-          "CODE 2l4",
+          "FM 1\n",
+          "FM 2\n",
+          "CONTROL 1\n",
+          "TEXT 1\n",
+          "TEXT 2\n",
+          "CONTROL 2\n",
+          "CODE 1\n",
+          "CONTROL 3\n",
+          "TEXT 3\n",
+          "TEXT 4\n",
+          "CODE 2\n",
+          "CODE 2l2\n",
+          "CODE 2l3\n",
+          "CODE 2l4\n",
         ]
       end
 
       it "should be able to retrieve text lines" do
         @it.text_lines.should == [
-          "TEXT 1",
-          "TEXT 2",
-          "TEXT 3",
-          "TEXT 4"
+          "TEXT 1\n",
+          "TEXT 2\n",
+          "TEXT 3\n",
+          "TEXT 4\n"
         ]
       end
 
       it "should be able to retrieve code lines" do
         @it.code_lines.should == [
-          "CODE 1",
-          "CODE 2",
-          "CODE 2l2",
-          "CODE 2l3",
-          "CODE 2l4",
+          "CODE 1\n",
+          "CODE 2\n",
+          "CODE 2l2\n",
+          "CODE 2l3\n",
+          "CODE 2l4\n",
         ]
       end
 
       it "should be able to retrieve front matter" do
         @it.front_matter_lines.should == [
-          "FM 1",
-          "FM 2",
+          "FM 1\n",
+          "FM 2\n",
         ]
       end
 
       it "should be able to retrieve text by section" do
         @it.section("SECTION1").should == [
-          "TEXT 1",
-          "TEXT 2"
+          "TEXT 1\n",
+          "TEXT 2\n"
         ]
         @it.section("SECTION2").should == [
-          "TEXT 3",
-          "TEXT 4"
+          "TEXT 3\n",
+          "TEXT 4\n"
         ]
       end
 
       it "should be able to retrieve code by sample name" do
         @it.sample("SECTION1").should == [
-          "CODE 1"
+          "CODE 1\n"
         ]
         @it.sample("SECTION2").should == [
-          "CODE 2",
-          "CODE 2l2",
-          "CODE 2l3",
-          "CODE 2l4",
+          "CODE 2\n",
+          "CODE 2l2\n",
+          "CODE 2l3\n",
+          "CODE 2l4\n",
         ]
       end
 
@@ -464,8 +464,8 @@ module Germinate
       end
 
       it "should be able to retrieve lines using a selector" do
-        @it[Selector.new("@SECTION1", nil)].should == ["CODE 1"]
-        @it["@SECTION1"].should == ["CODE 1"]
+        @it[Selector.new("@SECTION1", nil)].should == ["CODE 1\n"]
+        @it["@SECTION1"].should == ["CODE 1\n"]
       end
 
       context "given the $SOURCE selector with no subscripts" do
@@ -485,49 +485,49 @@ module Germinate
 
       SELECTOR_EXAMPLES = [
         # Selector                  Expected Excerpt                   Expected Type
-        [ "@SECTION1",              ["CODE 1"],                        CodeHunk ],
-        [ "@SECTION2:1",            ["CODE 2"],                        CodeHunk ],
-        [ "@SECTION2:2..3",         ["CODE 2l2", "CODE 2l3"],          CodeHunk ],
-        [ "@SECTION2:2,2",          ["CODE 2l2", "CODE 2l3"],          CodeHunk ],
-        [ "@SECTION2:/l2/../l3/",   ["CODE 2l2", "CODE 2l3"],          CodeHunk ],
-        [ "@SECTION2:/l2/.../l3/",  ["CODE 2l2"],                      CodeHunk ],
+        [ "@SECTION1",              ["CODE 1\n"],                      CodeHunk ],
+        [ "@SECTION2:1",            ["CODE 2\n"],                      CodeHunk ],
+        [ "@SECTION2:2..3",         ["CODE 2l2\n", "CODE 2l3\n"],      CodeHunk ],
+        [ "@SECTION2:2,2",          ["CODE 2l2\n", "CODE 2l3\n"],      CodeHunk ],
+        [ "@SECTION2:/l2/../l3/",   ["CODE 2l2\n", "CODE 2l3\n"],      CodeHunk ],
+        [ "@SECTION2:/l2/.../l3/",  ["CODE 2l2\n"],                    CodeHunk ],
         [ "@SECTION2:/2/,3",        [
-            "CODE 2",
-            "CODE 2l2", 
-            "CODE 2l3"],                                               CodeHunk ],
+            "CODE 2\n",
+            "CODE 2l2\n", 
+            "CODE 2l3\n"],                                             CodeHunk ],
         [ "@SECTION2:/l2/..-1",     [
-            "CODE 2l2", 
-            "CODE 2l3", 
-            "CODE 2l4"],                                               CodeHunk ],
+            "CODE 2l2\n", 
+            "CODE 2l3\n", 
+            "CODE 2l4\n"],                                             CodeHunk ],
         [ "$CODE",                  [          
-            "CODE 1",
-            "CODE 2",
-            "CODE 2l2",
-            "CODE 2l3",
-            "CODE 2l4", ],                                      CodeHunk 
+            "CODE 1\n",
+            "CODE 2\n",
+            "CODE 2l2\n",
+            "CODE 2l3\n",
+            "CODE 2l4\n", ],                                    CodeHunk 
         ],
         [ "$SOURCE",               [          
-            "FM 1",
-            "FM 2",
-            "CONTROL 1",
-            "TEXT 1",
-            "TEXT 2",
-            "CONTROL 2",
-            "CODE 1",
-            "CONTROL 3",
-            "TEXT 3",
-            "TEXT 4",
-            "CODE 2",
-            "CODE 2l2",
-            "CODE 2l3",
-            "CODE 2l4",
+            "FM 1\n",
+            "FM 2\n",
+            "CONTROL 1\n",
+            "TEXT 1\n",
+            "TEXT 2\n",
+            "CONTROL 2\n",
+            "CODE 1\n",
+            "CONTROL 3\n",
+            "TEXT 3\n",
+            "TEXT 4\n",
+            "CODE 2\n",
+            "CODE 2l2\n",
+            "CODE 2l3\n",
+            "CODE 2l4\n",
           ],                                                    FileHunk
         ],
         [ "$TEXT",               [          
-            "TEXT 1",
-            "TEXT 2",
-            "TEXT 3",
-            "TEXT 4"
+            "TEXT 1\n",
+            "TEXT 2\n",
+            "TEXT 3\n",
+            "TEXT 4\n"
           ],                                                    CodeHunk
         ],
 

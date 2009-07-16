@@ -4,7 +4,7 @@ require File.expand_path(
 module Germinate
   describe SourceFile do
     before :each do
-      @it = SourceFile.new("SOURCE_PATH")
+      @it = SourceFile.new("DIR/SOURCE_PATH.EXT")
       @file = stub("File", :flock => 0)
       @lines = ["Line 1\n", "Line 2\n"]
       File.stub!(:new).and_return(@file)
@@ -12,17 +12,17 @@ module Germinate
     end
 
     it "should have a source path" do
-      @it.path.to_s.should == "SOURCE_PATH"
+      @it.path.to_s.should == "DIR/SOURCE_PATH.EXT"
     end
 
     it "should append .germ.back for the backup path" do
-      @it.backup_path.to_s.should == "SOURCE_PATH.germ.bak"
+      @it.backup_path.to_s.should == "DIR/SOURCE_PATH.EXT.germ.bak"
     end
 
     context "when writing" do
       before :each do
         @open_file = stub("Open File", :write => nil)
-        @path = stub("SOURCE_PATH", :read => "...")
+        @path = stub("Source Path", :read => "...")
         @path.stub!(:open).and_yield(@open_file)
         @backup_path = stub("BACKUP_PATH", :read => "...")
         @it.backup_path = @backup_path

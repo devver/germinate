@@ -10,7 +10,7 @@ class Germinate::Reader
   include AlterEgo
   extend Forwardable
 
-  CONTROL_PATTERN  = /^\s*([^\s\\]+)?\s*:([A-Z0-9_]+):\s*(.*)?\s*$/
+  CONTROL_PATTERN  = /^(\s*([^\s\\]+)?\s*):([A-Z0-9_]+):\s*(.*)?\s*$/
 
   attr_reader :librarian
   attr_reader :current_section
@@ -109,11 +109,11 @@ class Germinate::Reader
   def handle_control_line!(line)
     if match_data = CONTROL_PATTERN.match(line)
       comment_chars  = match_data[1]
-      keyword        = match_data[2]
-      argument_text  = match_data[3]
+      keyword        = match_data[3]
+      argument_text  = match_data[4]
       arguments      = YAML.load("[ #{argument_text} ]")
 
-      if comment_chars && !comment_prefix_known?
+      if comment_chars && !comment_chars.empty? && !comment_prefix_known?
         self.comment_prefix = comment_chars
       end
       case keyword
@@ -215,7 +215,7 @@ class Germinate::Reader
   end
 
   def comment_pattern
-    /^\s*(#{comment_prefix})/
+    /^#{Regexp.escape(comment_prefix.rstrip)}/
   end
 
   def unescape(line)

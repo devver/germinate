@@ -33,7 +33,7 @@ Then /^the output should be as follows:$/ do |example_output|
 end
 
 Then /^the article contents should be:$/ do |contents|
-  @filename.read.should == contents
+  @filename.read.strip.should == contents.strip
 end
 
 Then /^the article backup contents should be:$/ do |contents|

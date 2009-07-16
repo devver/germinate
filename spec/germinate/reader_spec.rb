@@ -45,8 +45,8 @@ module Germinate
     CONTROL_LINES = [
       # Line                  Comment  Args
       [":TEXT:\n",            nil,     []],
-      ["# :CUT: \n",          "#",     []],
-      ["  ; :TEXT: foo\n",    ";",     ["foo"]],
+      ["# :CUT: \n",          "# ",    []],
+      ["  ; :TEXT: foo\n",    "  ; ",  ["foo"]],
       ["//:SAMPLE:\n",        "//",    []],
       ["$>:END: ",            "$>",    []],
       [":SAMPLE: bar, { a: 1, b: 2 }", nil, ["bar", {"a"=>1, "b"=>2}]],

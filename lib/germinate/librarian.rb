@@ -227,6 +227,8 @@ class Germinate::Librarian
   private
 
   def add_line!(line)
+    line.chomp!
+    line << "\n"
     @lines << line
   end
 

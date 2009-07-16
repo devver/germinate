@@ -17,7 +17,7 @@ class Germinate::Variable < String
   private
   
   def make_control_line(comment_prefix)
-    "#{comment_prefix} :SET: '#{name}', '#{self}'\n"
+    "#{comment_prefix}:SET: '#{name}', '#{self}'\n"
   end
 
 end

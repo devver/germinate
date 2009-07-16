@@ -55,7 +55,7 @@ module Germinate::TextTransforms
     lambda { |hunk|
       hunk.dup.map! do |line|
         if comment_prefix
-          line.sub(/^#{comment_prefix}/,"")
+          line.sub(/^#{Regexp.escape(comment_prefix.rstrip)}\s*/,"")
         else
           line
         end

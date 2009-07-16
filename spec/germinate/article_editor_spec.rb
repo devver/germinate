@@ -24,8 +24,8 @@ module Germinate
 
       it "should yield text and code in order" do
         collect_hunks.should == [
-          ["this is the text", "text line 2"],
-          ["this is the code", "code line 2"]
+          ["this is the text\n", "text line 2\n"],
+          ["this is the code\n", "code line 2\n"]
         ]
       end
 
@@ -53,7 +53,7 @@ module Germinate
 
       it "should yield just the text" do
         collect_hunks.should == [
-          ["this is the text", "text line 2"]
+          ["this is the text\n", "text line 2\n"]
         ]
       end
     end

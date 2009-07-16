@@ -5,7 +5,7 @@ require 'fileutils'
 # SourcePath represents an article source file on disk.
 class Germinate::SourceFile
   fattr :path
-  fattr(:backup_path) { Pathname(path.basename.to_s + ".germ.bak") }
+  fattr(:backup_path) { Pathname(path.to_s + ".germ.bak") }
   fattr(:log) { Germinate.logger }
 
   def initialize(path)

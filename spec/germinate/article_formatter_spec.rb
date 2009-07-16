@@ -52,7 +52,7 @@ module Germinate
       end
 
       it "should erase comments" do
-        output.should == " foo\nbar\n"
+        output.should == "foo\nbar\n"
       end
     end
 
