@@ -3,9 +3,9 @@ require 'fattr'
 require 'English'
 require 'main'
 
-# A Process represents an external command which can be used to process a Hunk
+# A ShellProcess represents an external command which can be used to process a Hunk
 # of text.
-class Germinate::Process
+class Germinate::ShellProcess
   attr_reader :name
   attr_reader :command
   attr_reader :variables

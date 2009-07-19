@@ -10,6 +10,7 @@ class Germinate::Publisher
 
   fattr(:pipeline) 
   fattr(:log) { Germinate.logger }
+  fattr(:selector) 
 
   @registered_publishers = {}
 
@@ -33,11 +34,14 @@ class Germinate::Publisher
     end
   end
 
-  def initialize(name, librarian, options)
+  def initialize(name, librarian, options={})
     self.name      = name
     self.librarian = librarian
     self.options   = options
     self.pipeline  = librarian.make_pipeline(options.delete(:pipeline){""})
+    self.selector  = options.delete(:selector) {
+      options.delete(:select){"$TEXT|_transform"}
+    }
 
     # All options should have been removed by this point
     options.keys.each do |key|
@@ -45,10 +49,8 @@ class Germinate::Publisher
     end
   end
 
-  private
-
   def input
-    source = librarian["$SOURCE", "publish #{name} command"]
+    source = librarian[selector, "publish #{name} command"]
     pipeline.call(source)
   end
 end

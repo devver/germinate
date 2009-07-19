@@ -17,6 +17,10 @@ module Germinate
     end
 
     context "by default" do
+      it "should have access to the special _transform process" do
+        @it.process('_transform').should be_a_kind_of(TransformProcess)
+      end
+      
       it "should not have a comment prefix" do
         @it.comment_prefix.should == nil
         @it.comment_prefix_known?.should be_false
@@ -88,7 +92,9 @@ module Germinate
 
     context "given an insertion in my_section with selector @my_selector" do
       before :each do
-        @it.add_insertion!("my_section", "@my_selector", { :comment_prefix => "@" })
+        @it.disable_all_transforms!
+        @it.add_code!("my_sample", "line 1\n")
+        @it.add_insertion!("my_section", "@my_sample", { :comment_prefix => "@" })
       end
 
       it "should add an Insertion to the named section" do
@@ -96,7 +102,7 @@ module Germinate
       end
 
       it "should give the insertion the selector @my_selector" do
-        @it.section("my_section").last.selector.to_s.should == "@my_selector"
+        @it.section("my_section").last.selector.to_s.should == "@my_sample"
       end
 
       it "should give the insertion a reference to the library" do
@@ -106,6 +112,11 @@ module Germinate
       it "should apply any passed attributes to the insertion" do
         @it.section("my_section").last.comment_prefix.should == "@"
       end
+
+      it "should include the insertion in the $TEXT hunk" do
+        @it['$TEXT'].first.should be_a_kind_of(Insertion)
+        @it['$TEXT'].first.selector.should == "@my_sample"
+      end
     end
 
     context "given a process to file" do 
@@ -113,8 +124,8 @@ module Germinate
         @it.add_process!("myproc", "cowsay")
       end
 
-      it "should make the process available as a Process object" do
-        @it.process("myproc").should be_a_kind_of(Germinate::Process)
+      it "should make the process available as a ShellProcess object" do
+        @it.process("myproc").should be_a_kind_of(Germinate::ShellProcess)
       end
 
       it "should store the process name" do
@@ -136,20 +147,20 @@ module Germinate
 
     context "given a code sample and some processes" do
       before :each do 
-        @output_a  = ["line 1a", "line 2a"]
-        @output_b  = ["line 1b", "line 2b"]
-        @process_a = stub("Process A", 
+        @output_a  = Hunk.new(["line 1a", "line 2a"])
+        @output_b  = Hunk.new(["line 1b", "line 2b"])
+        @process_a = stub("ShellProcess A", 
           :call => @output_a,
           :name => "foo",
           :command => "aaa")
-        @process_b = stub("Process B", 
+        @process_b = stub("ShellProcess B", 
           :call => @output_b,
           :name => "bar",
           :command => "bbb")
-        Germinate::Process.stub!(:new).
+        Germinate::ShellProcess.stub!(:new).
           with("foo", "aaa", {}).
           and_return(@process_a)
-        Germinate::Process.stub!(:new).
+        Germinate::ShellProcess.stub!(:new).
           with("bar", "bbb", {}).
           and_return(@process_b)
 
@@ -524,11 +535,7 @@ module Germinate
           ],                                                    FileHunk
         ],
         [ "$TEXT",               [          
-            "TEXT 1\n",
-            "TEXT 2\n",
-            "TEXT 3\n",
-            "TEXT 4\n"
-          ],                                                    CodeHunk
+            "TEXT 1 TEXT 2 TEXT 3 TEXT 4" ],                    TextHunk
         ],
 
       ]

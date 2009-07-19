@@ -1,4 +1,5 @@
 require 'alter_ego'
+require 'ick'
 require 'forwardable'
 require 'fattr'
 
@@ -9,6 +10,7 @@ require 'fattr'
 class Germinate::Reader
   include AlterEgo
   extend Forwardable
+  Ick::Returning.belongs_to(self)
 
   CONTROL_PATTERN  = /^(\s*([^\s\\]+)?\s*):([A-Z0-9_]+):\s*(.*)?\s*$/
 
@@ -39,6 +41,12 @@ class Germinate::Reader
 
   state :code do
     handle :add_line!, :add_code!
+
+    on_enter do
+      if librarian.section_names.include?(sample_name)
+        librarian.add_insertion!(sample_name, "@#{sample_name}", {})
+      end
+    end
 
     transition :to => :text, :on => :text!
     transition :to => :code, :on => :code!
@@ -189,6 +197,10 @@ class Germinate::Reader
     self.current_section = name
   end
 
+  def sample_name
+    self.current_section
+  end
+
   def automatic_section_name
     "SECTION#{section_count}"
   end
@@ -228,6 +240,12 @@ class Germinate::Reader
         attributes[:code_open_bracket] = options.fetch("brackets").first
         attributes[:code_close_bracket] = options.fetch("brackets").last
       end
+      if options["disable_transforms"]
+        Germinate::TextTransforms.singleton_methods.each do |transform|
+          attributes[transform.to_sym] = false
+        end
+      end
+      attributes
     end
   end
 

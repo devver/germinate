@@ -13,10 +13,19 @@
 
 * DONE Improve error message for non-matching regexen in selectors :usability:
   CLOSED: [2009-07-13 Mon 02:17]
+* TODO Make text transforms just another process for pipelines :techdebt:
+  This should help make [[*Make%20it%20possible%20for%20publishers%20to%20use%20formatted%20text%20as%20input][this item]] possible.
+* TODO Add standard "select" option to publishers
+  The select option would define a selector to be used to get the input for the
+  publisher. Another step towards [[*Make%20it%20possible%20for%20publishers%20to%20use%20formatted%20text%20as%20input][this]].
+
+  This MAY make the current "pipeline" option redundant.
+* TODO Make it possible for publishers to use formatted text as input :feature:
+  Pretty useless without this...
+
+* TODO Refactor format command into a null publisher        :techdebt:
 
 * TODO Output line numbers for Reader errors                :usability:
-
-* TODO "Execute" command
 
 * TODO Gist uploads                                         :feature:
 
@@ -91,7 +100,8 @@
   : #   command: cat
   : #   pipeline: markdown
   : # :END:
-* TODO Variables
+* DONE Variables
+  CLOSED: [2009-07-16 Thu 19:47]
   Syntax:
   : :SET: foo, 123
 *** Reader records what line they were set on
@@ -106,3 +116,14 @@
     - Restores the backup if there is a problem
     
 *** Variables are available to processes as environment vars
+* TODO Add processing/style options to TEXT sections        :feature:
+* TODO Add console modes
+*** TODO Shell console
+    In this version we just exec $SHELL with some custom environment.  A
+    GERMINATE_SOURCE variable should point to the source file, and all germ
+    commands should use it if no explicit source is specified.
+
+    In addition, aliases for all the common germ modes should be installed -
+    publish, format, list, etc.
+*** TODO Debug console
+    An IRB session with Germinate preloaded.

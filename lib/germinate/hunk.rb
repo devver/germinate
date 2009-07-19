@@ -16,6 +16,10 @@ class Germinate::Hunk < ::Array
     copy_shared_style_attributes_from(template)
   end
 
+  def to_s
+    "#{self.class.name}[#{origin}](#{self.size} lines)"
+  end
+
   # return a copy with leading and trailing whitespace lines removed
   def strip
     Germinate::TextTransforms.strip_blanks.call(self)
@@ -121,6 +125,16 @@ end
 
 # Represents a hunk of article text
 class Germinate::TextHunk < Germinate::Hunk
+  def initialize(contents = [], template = {})
+    self.join_lines        = true
+    self.strip_blanks      = true
+    self.rstrip_lines      = true
+    self.uncomment         = true
+    self.expand_insertions = true
+    self.flatten_nested    = true
+    super
+  end
+
   def format_with(formatter)
     super(formatter) do |formatter|
       formatter.format_text!(self, comment_prefix)
@@ -130,6 +144,12 @@ end
 
 # Represents a hunk of source code
 class Germinate::CodeHunk < Germinate::Hunk
+  def initialize(contents = [], template = {})
+    self.strip_blanks = true
+    self.bracket      = true
+    super
+  end
+
   def code_open_bracket=(new_value)
     super
   end

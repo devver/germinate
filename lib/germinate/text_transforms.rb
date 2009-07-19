@@ -9,15 +9,20 @@ module Germinate::TextTransforms
         case line
         when /\S/
           result.last << line.strip
-        else
+        when String
           result << [line]
           result << []
+        else
+          result << line
         end
         result
       }
       paragraphs.delete_if{|p| p.empty?}
       hunk.dup.replace(paragraphs.map {|paragraph|
-        paragraph.join(" ")
+        case paragraph
+        when Germinate::Hunk then paragraph
+        else paragraph.join(" ") 
+        end
       })
     }
   end
@@ -25,8 +30,8 @@ module Germinate::TextTransforms
   def self.strip_blanks
     lambda { |hunk|
       result = hunk.dup
-      result.shift until result.first =~ /\S/ || result.empty?
-      result.pop until result.last =~ /\S/ || result.empty?
+      result.shift while result.first =~ /^\s*$/ && !result.empty?
+      result.pop while result.last =~ /^\s*$/ && !result.empty?
       result
     }
   end
@@ -34,7 +39,7 @@ module Germinate::TextTransforms
   def self.erase_comments(comment_prefix="")
     lambda { |hunk|
       hunk.dup.map! do |line|
-        if comment_prefix
+        if comment_prefix && String === line
           if match_data = /^\s*(#{comment_prefix})+\s*/.match(line)
             offset = match_data.begin(0)
             length = match_data[0].length
@@ -51,10 +56,11 @@ module Germinate::TextTransforms
     }
   end
 
-  def self.uncomment(comment_prefix="")
+  def self.uncomment(comment_prefix=nil)
     lambda { |hunk|
+      comment_prefix ||= hunk.comment_prefix
       hunk.dup.map! do |line|
-        if comment_prefix
+        if comment_prefix && line.respond_to?(:sub)
           line.sub(/^#{Regexp.escape(comment_prefix.rstrip)}\s*/,"")
         else
           line
@@ -65,7 +71,7 @@ module Germinate::TextTransforms
 
   def self.rstrip_lines
     lambda { |hunk|
-      hunk.dup.map!{|line| line.to_s.rstrip}
+      hunk.dup.map!{|line| String === line ? line.to_s.rstrip : line}
     }
   end
 
@@ -85,6 +91,29 @@ module Germinate::TextTransforms
     lambda do |hunk|
       pipeline ||= hunk.pipeline
       pipeline.call(hunk)
+    end
+  end
+
+  def self.expand_insertions
+    lambda do |hunk|
+      hunk.resolve_insertions
+    end
+  end
+
+  def self.flatten_nested
+    lambda do |hunk|
+      result = hunk.flatten
+      result.copy_shared_style_attributes_from(hunk)
+      result
+    end
+  end
+
+  eigenclss = class << self; self; end
+
+  eigenclss.instance_eval do
+    private
+    def log
+      @log ||= Germinate.logger
     end
   end
 end

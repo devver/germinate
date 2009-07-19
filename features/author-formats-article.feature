@@ -10,7 +10,7 @@ Feature: author formats article
       # :TEXT:
       # This is my article
     
-      this is my code 
+      this is my code
       """
     When I run the format command on the article
     Then the output should be as follows:
@@ -27,7 +27,7 @@ Feature: author formats article
       # :TEXT:
       # This is my article
     
-      this is my code 
+      this is my code
       """
     When I run the format command on the article
     Then the output should be as follows:
@@ -47,7 +47,7 @@ Feature: author formats article
       # This is my article
     
       # :SAMPLE: SECTION1, { brackets: [ '[code]', '[/code]' ] }
-      this is my code 
+      this is my code
       """
     When I run the format command on the article
     Then the output should be as follows:

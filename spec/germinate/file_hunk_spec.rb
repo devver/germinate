@@ -23,5 +23,6 @@ module Germinate
         @it.format_with(@formatter)
       end
     end
+
   end
 end

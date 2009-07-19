@@ -225,6 +225,19 @@ module Germinate
       end
     end
 
+    context "given a :SAMPLE: after a TEXT section with the same name" do
+      before :each do
+        @it << ":TEXT: foobar\n"
+        @it << "This is the text\n"
+      end
+
+      it "should add an implicit insertion to the TEXT section" do
+        @librarian.should_receive(:add_insertion!).with("foobar", "@foobar", {})
+        @it << ":SAMPLE: foobar\n"
+      end
+
+    end
+
     context "given a :SAMPLE: keyword with custom brackets" do
       before :each do
         @line = ':SAMPLE: foobar, { brackets: ["<<", ">>"] }'
@@ -309,6 +322,25 @@ module Germinate
             :code_open_bracket => "<<", 
             :code_close_bracket => ">>" 
           })
+        @it << @line
+      end
+
+    end
+
+    context "given an insertion with the special disable_transforms attr" do
+      before :each do
+        @it << ":TEXT: mysection"
+        @line = ":INSERT: foo, { disable_transforms: true } "
+      end
+      
+      it "should disable all transforms in the options" do
+        @librarian.should_receive(:add_insertion!) do 
+          |section, selector, options|
+          
+          TextTransforms.singleton_methods.each do |transform|
+            options[transform.to_sym].should be_false
+          end
+        end
         @it << @line
       end
 

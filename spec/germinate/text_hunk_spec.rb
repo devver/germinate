@@ -3,6 +3,51 @@ require File.expand_path(
 
 module Germinate
   describe TextHunk do
+    before :each do
+      @it = TextHunk.new(["line 1", "line 2"])
+    end
+
+    it "should enable insertion expansion" do
+      @it.should be_expand_insertions
+    end
+
+    it "should enable line joining" do
+      @it.should be_join_lines
+    end
+
+    it "should enable blank stripping" do
+      @it.should be_strip_blanks
+    end
+
+    it "should disable comment erasure" do
+      @it.should_not be_erase_comments
+    end
+
+    it "should enable uncommenting" do
+      @it.should be_uncomment
+    end
+
+    it "should enable stripping right-side whitespace" do
+      @it.should be_rstrip_lines
+    end
+
+    it "should disable bracketing" do
+      @it.should_not be_bracket
+    end
+      
+    it "should enable pipeline processing" do
+      @it.should be_pipeline
+    end
+
+    it "should enable insertion resolution" do
+      @it.should be_expand_insertions
+    end
+
+    it "should enable flattening nested hunks" do
+      @it.should be_flatten_nested
+    end
+
+
     context "when visited by a formatter" do
       before :each do
         @comment_prefix = ">>"

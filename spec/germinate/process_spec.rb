@@ -2,7 +2,7 @@ require File.expand_path(
     File.join(File.dirname(__FILE__), %w[.. .. lib germinate]))
 
 module Germinate
-  describe Process do
+  describe ShellProcess do
     before :each do
       @input   = Germinate::Hunk.new(
         ["line 1\n", "line 2\n"], 
@@ -17,7 +17,7 @@ module Germinate
 
     context "given a command and some variables" do
       before :each do
-        @it = Germinate::Process.new(
+        @it = Germinate::ShellProcess.new(
           "myproc", "mycommand", { "FOO" => 123, "BAR" => 456 })
         ENV["FOO"] = "xxx"
       end
@@ -39,7 +39,7 @@ module Germinate
 
     context "given a command 'mycommand'" do
       before :each do
-        @it = Germinate::Process.new("myproc", "mycommand")
+        @it = Germinate::ShellProcess.new("myproc", "mycommand")
       end
 
       context "when called on a hunk of text" do
@@ -64,7 +64,7 @@ module Germinate
 
     context "given a command 'mycommand %f' and called on some text" do
       before :each do
-        @it = Germinate::Process.new("myproc", "mycommand %f")
+        @it = Germinate::ShellProcess.new("myproc", "mycommand %f")
       end
 
       it "should create a temporary file and pass the name to the command" do
@@ -91,7 +91,7 @@ module Germinate
         @input = Germinate::FileHunk.new(
           ["line 1\n", "line 2\n"],
           {:source_path => "SOURCE_PATH"})
-        @it = Germinate::Process.new("myproc", "mycommand %f")
+        @it = Germinate::ShellProcess.new("myproc", "mycommand %f")
       end
 
       it "should pass the source file path to the command" do

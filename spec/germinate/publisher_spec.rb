@@ -3,6 +3,17 @@ require File.expand_path(
 
 module Germinate
   describe Publisher do
+    before :each do
+      @name      = "my_pub"
+      @hunk      = stub("Input Hunk")
+      @output    = stub("Pipeline Output")
+      @pipeline  = stub("Pipeline", :call => @output)
+      @librarian = stub("Librarian", 
+        :make_pipeline => @pipeline,
+        :[]            => @hunk ).as_null_object
+      @options   = {:a => 'b'}
+    end
+
     context "when a new publisher type 'foo' is defined" do
       before :each do
         @it = Germinate::Publisher
@@ -12,9 +23,6 @@ module Germinate
       end
 
       it "should be able to make 'foo' publishers" do
-        @name      = "my_pub"
-        @librarian = stub("Librarian")
-        @options   = {:a => 'b'}
         @publisher = stub("Publisher")
         @subclass.should_receive(:new).with(@name, @librarian, @options).
           and_return(@publisher)
@@ -80,6 +88,42 @@ module Germinate
       it "should use the librarian to construct a pipeline" do
         @librarian.should_receive(:make_pipeline).with("foo|bar")
         @it = Publisher.new(@name, @librarian, @options)
+      end
+    end
+
+    context "with no selector specified" do
+      before :each do
+        @it = Publisher.new(@name, @librarian, @options)
+      end
+
+      it "should select $TEXT|_transform" do
+        @it.selector.should == "$TEXT|_transform"
+      end
+
+    end
+
+    context "with a custom selector specified" do
+      before :each do
+        @it = Publisher.new(@name, @librarian, { :selector => "@sec1|myproc" })
+      end
+
+      it "should have the specified selector" do
+        @it.selector.should == "@sec1|myproc"
+      end
+
+      it "should use the selector to get a hunk to process" do
+        @librarian.should_receive(:[]).
+          with("@sec1|myproc", anything)
+        @it.input
+      end
+
+      it "should pass the selected hunk through the pipeline to get input" do
+        @pipeline.should_receive(:call).with(@hunk)
+        @it.input
+      end
+
+      it "should use pipeline output as input to publisher process" do
+        @it.input.should == @output
       end
     end
   end

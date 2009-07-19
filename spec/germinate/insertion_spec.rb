@@ -11,7 +11,8 @@ module Germinate
     end
 
     it "should use the library to resolve itself" do
-      @library.should_receive(:[]).with(@selector).and_return(@hunk)
+      @library.should_receive(:[]).
+        with(@selector, anything, anything).and_return(@hunk)
       @it.resolve.should == @hunk
     end
   end

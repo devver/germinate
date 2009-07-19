@@ -8,5 +8,6 @@
 # You get the idea.
 
 # It works in code too:
+
 # :SAMPLE:
 # \:PROCESS: foo, bar

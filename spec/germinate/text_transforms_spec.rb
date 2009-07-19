@@ -6,12 +6,34 @@ module Germinate
 
     Germinate::TextTransforms.methods(false).each do |transform|
       describe "'#{transform}'" do
+        before :each do
+          @transform = Germinate::TextTransforms.send(transform)
+        end
+
         it "should preserve hunk attributes from input to output" do
           @pipeline = lambda {|h| h}
           @input = Hunk.new([], :comment_prefix => "foo", :pipeline => @pipeline)
-          @transform = Germinate::TextTransforms.send(transform)
           @output = @transform.call(@input)
           @output.comment_prefix.should == @input.comment_prefix
+        end
+
+        unless transform == "flatten_nested"
+          context "given a lumpy hunk" do
+            before :each do
+              @nested_hunk = Hunk.new(["line 3", "line 4"])
+              @lumpy = Hunk.new([
+                  "line 1",
+                  @nested_hunk,
+                  "line 2"
+                ],
+                :comment_prefix => "foo")
+              @output = @transform.call(@lumpy)
+            end
+            
+            it "should pass nested hunks through untouched" do
+              @output[1].should == @nested_hunk
+            end
+          end
         end
       end
     end
@@ -49,7 +71,7 @@ module Germinate
         end
 
         it "should do nothing" do
-          @it.call(["# foo", " bar"]).should == ["# foo", " bar"]
+          @it.call(Hunk.new(["# foo", " bar"])).should == ["# foo", " bar"]
         end
       end
 
@@ -60,6 +82,17 @@ module Germinate
 
         it "should strip matching comment prefixes" do
           @it.call(["# foo", " bar"]).should == ["foo", " bar"]
+        end
+      end
+
+      context "given no explicit prefix" do
+        before :each do
+          @hunk = Hunk.new([" # foo", " bar"], :comment_prefix => " # ")
+          @it = TextTransforms.uncomment
+        end
+
+        it "should fall back on hunk's comment prefix" do
+          @it.call(@hunk).should == ["foo", " bar"]
         end
       end
 
@@ -78,6 +111,23 @@ module Germinate
 
         it "should strip the blak lines" do
           @it.call(@hunk).should == ["the good stuff", "  \n", "more good stuff\n"]
+        end
+      end
+
+      context "given a nested hunk at the end" do
+        before :each do
+          @hunk = Hunk.new(
+            [
+              "not blank", 
+              "the good stuff", 
+              Hunk.new(["line 1"])
+            ])
+          @it = TextTransforms.strip_blanks
+        end
+
+        it "should not strip the hunk" do
+          @it.call(@hunk).should == 
+            ["not blank", "the good stuff", Hunk.new(["line 1"])]
         end
       end
 
@@ -149,6 +199,44 @@ module Germinate
           @it.call(@hunk).should == @output
         end
       end
+    end
+
+    describe "expand_insertions" do
+      before :each do
+        @output   = stub("Output")
+        @hunk     = stub("Hunk")
+      end
+
+      context "called on a hunk" do
+        before :each do
+          @it = TextTransforms.expand_insertions
+        end
+
+        it "should invoke expand_insertions on the hunk" do
+          @hunk.should_receive(:resolve_insertions).and_return(@output)
+          @it.call(@hunk).should == @output
+        end
+      end
+    end
+
+    describe "flatten" do
+      context "given a lumpy hunk" do
+        before :each do
+          @nested_hunk = Hunk.new(["line 3", "line 4"])
+          @lumpy = Hunk.new([
+              "line 1",
+              @nested_hunk,
+              "line 2"
+            ],
+            :comment_prefix => "foo")
+          @output = TextTransforms.flatten_nested.call(@lumpy)
+        end
+        
+        it "should flatten the hunk into a single level" do
+          @output.should == ["line 1", "line 3", "line 4", "line 2"]
+        end
+      end
+
     end
   end
 end

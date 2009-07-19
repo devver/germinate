@@ -24,14 +24,14 @@ module Germinate
       before :each do
         @result  = ["line 1\n", "line 2\n"]
         @output  = StringIO.new
-        @process = stub("Process", :call => @result).as_null_object
+        @process = stub("ShellProcess", :call => @result).as_null_object
         @source  = stub("Source").as_null_object
         @librarian.stub!(:[]).and_return(@source)
-        Process.stub!(:new).and_return(@process)
+        ShellProcess.stub!(:new).and_return(@process)
       end
       
       it "should create a new process" do
-        Process.should_receive(:new).with(@name, @command, @variables)
+        ShellProcess.should_receive(:new).with(@name, @command, @variables)
         @it.publish!(@output)
       end
 
@@ -46,7 +46,7 @@ module Germinate
       end
 
       it "should ask the librarian for the source file" do
-        @librarian.should_receive(:[]).with("$SOURCE", anything)
+        @librarian.should_receive(:[]).with("$TEXT|_transform", anything)
         @it.publish!(@output)
       end
 

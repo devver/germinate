@@ -3,6 +3,11 @@ require File.expand_path(
 
 module Germinate
   describe Selector do
+    
+    it "should be comparable to a string" do
+      Selector.new("@A:1..5").should be == "@A:1..5"
+      Selector.new("@A:1..5").should_not be == "@A:1..6"
+    end
 
     context "given a subscript" do
       before :each do
@@ -31,21 +36,36 @@ module Germinate
       specify { @it.should be_whole }
     end
 
+    context "given no type sigil or key" do
+      before :each do
+        @it = Selector.new(":2..5")
+      end
+
+      it "should have type code" do
+        @it.selector_type.should == :special
+      end
+
+      it "should have key SOURCE" do
+        @it.key.should == "SOURCE"
+      end
+    end
+
     EXAMPLE_SELECTORS = [
-      # selector       type      key        delim  start end length pipeline excerpt_output?
-      [ "@A",          :code,    "A",       '..',  1,    -1, nil,   []       ,false],
-      [ "@A:1",        :code,    "A",       nil,   1,    1,  nil,   []       ,false],
-      [ "",            :code,    "DEFAULT", '..',  1,    -1, nil,   []       ,false],
-      [ nil,           :code,    "DEFAULT", '..',  1,    -1, nil,   []       ,false],
-      [ ":2..4",       :code,    "DEFAULT", '..',  2,    4,  nil,   []       ,false],
-      [ ":2...4",      :code,    "DEFAULT", '...', 2,    4,  nil,   []       ,false],
-      [ "@B:2,5",      :code,    "B",       ',',   2,    nil,5,     []       ,false],
-      [ "@B:/z/,6",    :code,    "B",       ',',   /z/,  nil,6,     []       ,false],
-      [ "@_:/z/../x/", :code,    "_",       '..',  /z/,  /x/,nil,   []       ,false],
-      [ "@B:2,4|fnord",:code,    "B",       ',',   2,    nil,4,     ["fnord"],false],
-      [ "$FOO",        :special, "FOO",     '..',  1,    -1, nil,   []       ,false],
-      [ "@A|foo|bar",  :code,    "A",       '..',  1,    -1, nil,   ["foo", "bar"],false],
-      [ "@B|fnord:2,4",:code,    "B",       ',',   2,    nil,4,     ["fnord"],true],
+      # selector       type      key        delim  start end length pipeline             excerpt_output?
+      [ "@A",          :code,    "A",       '..',  1,    -1, nil,   %w[_transform]       ,false],
+      [ "@A:1",        :code,    "A",       nil,   1,    1,  nil,   %w[_transform]       ,false],
+      [ "",            :code,    "DEFAULT", '..',  1,    -1, nil,   %w[_transform]       ,false],
+      [ nil,           :code,    "DEFAULT", '..',  1,    -1, nil,   %w[_transform]       ,false],
+      [ ":2..4",       :code,    "DEFAULT", '..',  2,    4,  nil,   %w[_transform]       ,false],
+      [ ":2...4",      :code,    "DEFAULT", '...', 2,    4,  nil,   %w[_transform]       ,false],
+      [ "@B:2,5",      :code,    "B",       ',',   2,    nil,5,     %w[_transform]       ,false],
+      [ "@B:/z/,6",    :code,    "B",       ',',   /z/,  nil,6,     %w[_transform]       ,false],
+      [ "@_:/z/../x/", :code,    "_",       '..',  /z/,  /x/,nil,   %w[_transform]       ,false],
+      [ "@B:2,4|fnord",:code,    "B",       ',',   2,    nil,4,     %w[_transform fnord] ,false],
+      [ "$FOO",        :special, "FOO",     '..',  1,    -1, nil,   %w[_transform]       ,false],
+      [ "@A|foo|bar",  :code,    "A",       '..',  1,    -1, nil,   %w[_transform foo bar],false],
+      [ "@B|fnord:2,4",:code,    "B",       ',',   2,    nil,4,     %w[_transform fnord],true],
+      [ "@B|_transform",:code,   "B",       '..',  1,   -1,  nil,   %w[_transform],       false]
     ]
 
     EXAMPLE_SELECTORS.each do |selector_attributes| 

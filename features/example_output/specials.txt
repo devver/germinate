@@ -7,12 +7,16 @@ a_line_4 = 4
 b_line_1 = 1
 b_line_2 = 2
 
+
 Or all the text:
 # We can paste in all the code:
-#
+Insertion[$CODE(<Unknown>)]
+# 
 # Or all the text:
+Insertion[$TEXT(<Unknown>)]
 #
 # Or the entire source file
+Insertion[$SOURCE(<Unknown>)]
 
 Or the entire source file
 # :SAMPLE: A
@@ -27,10 +31,10 @@ b_line_2 = 2
 
 # :TEXT:
 # We can paste in all the code:
-# :INSERT: $CODE
-#
+# :INSERT: $CODE, { disable_transforms: true }
+# 
 # Or all the text:
-# :INSERT: $TEXT
+# :INSERT: $TEXT, { disable_transforms: true }
 #
 # Or the entire source file
-# :INSERT: $SOURCE
+# :INSERT: $SOURCE, { disable_transforms: true }

@@ -28,6 +28,8 @@ Feature: author views information
     Then the output should be as follows:
       """
       # Anonymous section 1
+      
+      Insertion[@SECTION1]
       """
     When I run the command "germ show --section=A" on the article
     Then the output should be as follows:

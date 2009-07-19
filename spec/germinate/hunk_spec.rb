@@ -33,6 +33,7 @@ module Germinate
         @it.send(attribute).should == "test"
       end
     end
+
   end
 
   describe Hunk do

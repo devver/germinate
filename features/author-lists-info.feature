@@ -41,5 +41,6 @@ Feature: author lists information
     Then the output should be as follows:
       """
       frob
+      _transform
       munge
       """

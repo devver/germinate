@@ -10,10 +10,10 @@ b_line_2 = 2
 
 # :TEXT:
 # We can paste in all the code:
-# :INSERT: $CODE
+# :INSERT: $CODE, { disable_transforms: true }
 # 
 # Or all the text:
-# :INSERT: $TEXT
+# :INSERT: $TEXT, { disable_transforms: true }
 #
 # Or the entire source file
-# :INSERT: $SOURCE
+# :INSERT: $SOURCE, { disable_transforms: true }

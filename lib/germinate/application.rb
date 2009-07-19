@@ -25,18 +25,8 @@ class Germinate::Application
 
   def format(source, path)
     librarian = load_librarian(source, path)
-    editor    = Germinate::ArticleEditor.new(librarian)
-    formatter = Germinate::ArticleFormatter.new(@output)
-
-    Germinate::SharedStyleAttributes.fattrs.each do 
-      |style_attribute|
-      formatter.send(style_attribute, librarian.send(style_attribute))
-    end
-    formatter.start!
-    editor.each_hunk do |hunk|
-      formatter.format!(hunk)
-    end
-    formatter.finish!
+    publisher = Germinate::SimplePublisher.new("simple", librarian)
+    publisher.publish!(@output)
   end
 
   def list(source, path, things_to_list)

@@ -1,5 +1,6 @@
 require 'orderedhash'
 require 'fattr'
+require 'ick'
 require File.expand_path("shared_style_attributes", File.dirname(__FILE__))
 
 # The Librarian is responsible for organizing all the chunks of content derived
@@ -7,6 +8,7 @@ require File.expand_path("shared_style_attributes", File.dirname(__FILE__))
 # formatting.
 class Germinate::Librarian
   include Germinate::SharedStyleAttributes
+  Ick::Returning.belongs_to(self)
 
   class VariableStore < OrderedHash
     def initialize(librarian)
@@ -63,7 +65,7 @@ class Germinate::Librarian
     @samples            = OrderedHash.new do |hash, key| 
       hash[key] = Germinate::CodeHunk.new([], shared_style_attributes)
     end
-    @processes = {}
+    @processes = {'_transform' => Germinate::TransformProcess.new}
     @publishers = OrderedHash.new
   end
 
@@ -91,6 +93,7 @@ class Germinate::Librarian
   def add_insertion!(section, selector, attributes)
     insertion = Germinate::Insertion.new(selector, self, attributes)
     @sections[section] << insertion
+    @text_lines << insertion
   end
 
   def set_code_attributes!(sample, attributes)
@@ -101,7 +104,7 @@ class Germinate::Librarian
 
   def add_process!(process_name, command)
     @processes[process_name] = 
-      Germinate::Process.new(process_name, command, variables)
+      Germinate::ShellProcess.new(process_name, command, variables)
   end
 
   def add_publisher!(name, identifier, options)
@@ -164,42 +167,46 @@ class Germinate::Librarian
     @samples.key?(sample_name)
   end
 
-  def [](selector, origin="<Unknown>")
+  def [](selector, origin="<Unknown>", template={})
+    log.debug "Selecting #{selector}, from #{origin}"
     selector = case selector
                when Germinate::Selector then selector
                else Germinate::Selector.new(selector, "SECTION0", origin)
                end
     sample = 
       case selector.selector_type
-      when :code then sample(selector.key)
+      when :code then 
+        sample(selector.key)
       when :special then 
         case selector.key
         when "SOURCE" 
-          if selector.whole?
-            Germinate::FileHunk.new(lines, self)
-          else
-            Germinate::CodeHunk.new(lines, self)
-          end
+          source_hunk = 
+            if selector.whole?
+              Germinate::FileHunk.new(lines, self)
+            else
+              Germinate::CodeHunk.new(lines, self)
+            end
+          source_hunk.disable_all_transforms!
+          source_hunk
         when "CODE"   then Germinate::CodeHunk.new(code_lines, self)
-        when "TEXT"   then Germinate::CodeHunk.new(text_lines, self)
+        when "TEXT"   then Germinate::TextHunk.new(text_lines, self)
         else raise "Unknown special section '$#{selector.key}'"
         end
       else
         raise Exception, 
               "Unknown selector type #{selector.selector_type.inspect}"
       end
-    
-    sample = execute_pipeline(sample, selector.pipeline)
 
-    start_offset = start_offset(sample, selector)
-    end_offset   = end_offset(sample, selector, start_offset)
-    case selector.delimiter
-    when '..' then sample[start_offset..end_offset]
-    when '...' then sample[start_offset...end_offset]
-    when ','   then sample[start_offset, selector.length]
-    when nil   then sample.dup.replace([sample[start_offset]])
-    else raise "Don't understand delimiter #{selector.delimiter.inspect}"
-    end
+    sample.copy_shared_style_attributes_from(template)
+    sample.origin.source_path ||= source_path
+    sample.origin.selector    ||= selector
+
+    sample = if selector.excerpt_output?
+               excerpt(execute_pipeline(sample, selector.pipeline), selector)
+             else
+               execute_pipeline(excerpt(sample, selector), selector.pipeline)
+             end
+    sample
   end
 
   def section_names
@@ -225,6 +232,19 @@ class Germinate::Librarian
   end
 
   private
+
+  def excerpt(sample, selector)
+    # TODO make excerpting just another TextTransform
+    start_offset = start_offset(sample, selector)
+    end_offset   = end_offset(sample, selector, start_offset)
+    case selector.delimiter
+    when '..' then sample[start_offset..end_offset]
+    when '...' then sample[start_offset...end_offset]
+    when ','   then sample[start_offset, selector.length]
+    when nil   then sample.dup.replace([sample[start_offset]])
+    else raise "Don't understand delimiter #{selector.delimiter.inspect}"
+    end
+  end
 
   def add_line!(line)
     line.chomp!

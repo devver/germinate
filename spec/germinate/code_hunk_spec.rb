@@ -7,6 +7,34 @@ module Germinate
       @it = CodeHunk.new(["foo", "bar"])
     end
 
+    it "should disable line joining" do
+      @it.should_not be_join_lines
+    end
+
+    it "should enable blank stripping" do
+      @it.should be_strip_blanks
+    end
+
+    it "should disable comment erasure" do
+      @it.should_not be_erase_comments
+    end
+
+    it "should disable uncommenting" do
+      @it.should_not be_uncomment
+    end
+
+    it "should disable stripping right-side whitespace" do
+      @it.should_not be_rstrip_lines
+    end
+
+    it "should enable bracketing" do
+      @it.should be_bracket
+    end
+      
+    it "should enable pipeline processing" do
+      @it.should be_pipeline
+    end
+
     context "when visited by a formatter" do
       before :each do
         @formatter = stub("Formatter")

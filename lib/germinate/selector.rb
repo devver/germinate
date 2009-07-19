@@ -10,11 +10,11 @@ class Germinate::Selector
   attr_reader :default_key
   attr_reader :origin
 
-  PATTERN = /^([@$])?(\w+)?(:([^\s\|]+))?(\|([\w|]+))?$/
-  EXCERPT_OUTPUT_PATTERN = /^([@$])?(\w+)?(\|([\w|]+))?(:([^\s\|]+))?$/
+  PATTERN = /^([@$])?(\w+)?(:([^\|]+))?(\|([\w|]+))?$/
+  EXCERPT_OUTPUT_PATTERN = /^([@$])?(\w+)?(\|([\w|]+))?(:([^\|]+))?$/
   EXCERPT_PATTERN = %r{((-?\d+)|(/[^/]*/))(((\.\.\.?)|(,))((-?\d+)|(/[^/]*/)))?}
 
-  def initialize(string, default_key, origin="<Unknown>")
+  def initialize(string, default_key=:unspecified, origin="<Unknown>")
     @string      = string
     @default_key = default_key
     @origin      = origin
@@ -37,10 +37,11 @@ class Germinate::Selector
     @selector_type = 
       case match_data[1]
       when "$" then :special
-      when "@", nil then :code
+      when "@" then :code
+      when nil then default_key == :unspecified ? :special : :code
       else raise "Unknown selector type '#{match_data[1]}'"
       end
-    @key = match_data[2] || default_key
+    @key = match_data[2] || (default_key == :unspecified ? "SOURCE" : default_key)
     if match_data[subscript_index]
       @slice = true
       parse_excerpt(match_data[subscript_index])
@@ -51,7 +52,8 @@ class Germinate::Selector
       @end_offset   = -1
       @length       = nil
     end
-    @pipeline = String(match_data[pipeline_index]).split("|")
+    @pipeline = String(match_data[pipeline_index]).
+      split("|").unshift('_transform').uniq
   end
 
   def start_offset_for_slice
@@ -78,7 +80,11 @@ class Germinate::Selector
   end
 
   def to_s
-    "selector '#{string}' originating from #{origin}"
+    string + "(#{origin})"
+  end
+
+  def ==(other)
+    string == other
   end
 
   private
