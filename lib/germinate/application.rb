@@ -29,46 +29,45 @@ class Germinate::Application
     publisher.publish!(@output)
   end
 
-  def list(source, path, things_to_list)
+  def list(source, path, collection)
     librarian = load_librarian(source, path)
-    if things_to_list.include?(:sections)
+    case collection
+    when "sections"
       @output.puts(librarian.section_names.join("\n"))
-    end
-    if things_to_list.include?(:samples)
+    when "samples"
       @output.puts(librarian.sample_names.join("\n"))
-    end
-    if things_to_list.include?(:processes)
+    when "processes"
       @output.puts(librarian.process_names.join("\n"))
-    end
-    if things_to_list.include?(:publishers)
+    when "publishers"
       @output.puts(*librarian.publisher_names)
-    end
-    if things_to_list.include?(:variables)
+    when "variables"
       librarian.variables.each_pair do |name, value|
         @output.puts("%-20s %s" % [name, value.to_s])
       end
+    else
+      raise "I don't know how to list '#{collection}'"
     end
   end
 
-  def show(source, path, selection)
+  def show(source, path, item_type, item)
     librarian = load_librarian(source, path)
-    selection.fetch(:section, []).each do |section|
-      @output.puts(*librarian.section(section))
-    end
-    selection.fetch(:sample, []).each do |sample|
-      @output.puts(*librarian.sample(sample))
-    end
-    selection.fetch(:process, []).each do |process|
-      @output.puts(*librarian.process(process).command)
-    end
-    selection.fetch(:publisher, []).each do |publisher|
-      @output.puts(*librarian.publisher(publisher))
+    case item_type
+    when "section"
+      @output.puts(librarian.section(item))
+    when "sample"
+      @output.puts(librarian.sample(item))
+    when "process"
+      @output.puts(librarian.process(item).command)
+    when "publisher"
+      @output.puts(librarian.publisher(item))
+    else
+      raise "I don't know how to show '#{item_type}'"
     end
   end
 
-  def select(source, path, selector, origin="select command")
+  def select(source, path, selector, options, origin="command line")
     librarian = load_librarian(source, path)
-    @output.puts(*librarian[selector, origin])
+    @output.puts(*librarian[selector, origin, options])
   end
 
   def publish(source, path, publisher, options={})

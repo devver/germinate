@@ -18,7 +18,7 @@ Feature: author experiments with selectors
 
       # :PROCESS: quote, "quoter %f"
       """
-    When I run the command "germ select --selector='@X:2..3|quote'" on the article
+    When I run the command "germ select '@X:2..3|quote'" on the article
     Then the output should be as follows:
       """
       > X 2

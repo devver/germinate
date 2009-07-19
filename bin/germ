@@ -59,62 +59,74 @@ Main do
   end
 
   mode :list do
-    description "List various article components"
-    source_argument
-    COLLECTIONS = [:sections, :samples, :processes, :publishers, :variables] 
-    COLLECTIONS.each do |collection| 
-      option collection do
-        description "List all #{collection}"
-        cast :bool
-      end
+    description "List info about the source file"
+    argument :collection do
+      arity 1
+      required
+      argument_required
+      description "One of: sections, samples, processes, publishers, variables"
     end
+    source_argument
 
     def run
-      things_to_list = []
-      COLLECTIONS.each do |collection|
-        things_to_list << collection if params[collection].value
-      end
       with_source_file do |source, path|
-        @application.list(source, path, things_to_list)
+        @application.list(source, path, params[:collection].value)
       end
     end
   end
 
   mode :show do
     description "Show details about various article components"
-    source_argument
-    TYPES = [:section, :sample, :process, :publisher] 
-    TYPES.each do |type| 
-      option type do
-        description "Show details about a #{type}"
-        argument_required
-      end
+    argument :type do
+      arity 1
+      required
+      argument_required
+      description "One of: section, sample, process, publisher, variable"
     end
+    argument :item do
+      arity 1
+      required
+      argument_required
+      description "The specific item to show details about"
+    end
+    source_argument
 
     def run
-      selection = TYPES.inject({}) {|sel, type|
-        sel[type] = params[type].values
-        sel
-      }
       with_source_file do |source, path|
-        @application.show(source, path, selection)
+        @application.show(source, path, type, item)
       end
     end
   end
 
   mode :select do
     description "Test out a selector"
-    source_argument
-    option(:selector, :s) do
+    argument :selector do
       arity 1
       required
       argument_required
-      description "The selector to search for"
+      description "The selector to retrieve"
+    end
+    source_argument
+
+    Germinate::TextTransforms.singleton_methods.each do |transform|
+      option(transform) do
+        description "Enable/disable the '#{transform}' text transform"
+        cast :bool
+      end
     end
 
     def run
+      options = Germinate::TextTransforms.singleton_methods.inject({}) do 
+        |opts, transform|
+        if params[transform].given?
+          opts[transform] = params[transform].value
+          logger.info "Text transform '#{transform}' " + 
+            (params[transform].value ? "enabled" : "disabled")
+        end
+        opts
+      end
       with_source_file do |source, path|
-        @application.select(source, path, params[:selector].value)
+        @application.select(source, path, params[:selector].value, options)
       end
     end
   end

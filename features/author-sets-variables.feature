@@ -11,7 +11,7 @@ Feature: author sets variables
     # This is some text
     # :SET: FOO, 123
     """
-    When I run the command "germ list --variables --debug" on the article
+    When I run the command "germ list variables --debug" on the article
     Then the output should be as follows:
     """
     FOO                  123
@@ -31,7 +31,7 @@ Feature: author sets variables
     # This is some text
     # :SET: FOO, 123
     """
-    When I run the command "germ list --variables --debug" on the article
+    When I run the command "germ list variables --debug" on the article
     Then the output should be as follows:
     """
     FOO                  123
@@ -47,7 +47,7 @@ Feature: author sets variables
     # :SET: FOO, 123
     # This is more text
     """
-    When I run the command "germ list --variables --debug" on the article
+    When I run the command "germ list variables --debug" on the article
     Then the output should be as follows:
     """
     FOO                  123
@@ -75,7 +75,7 @@ Feature: author sets variables
     # :SET: FOO, 123
     # This is more text
     """
-    When I run the command "germ list --variables --debug" on the article
+    When I run the command "germ list variables --debug" on the article
     Then the output should be as follows:
     """
     FOO                  456
