@@ -74,6 +74,7 @@ Feature: author sets variables
     # This is some text
     # :SET: FOO, 123
     # This is more text
+
     """
     When I run the command "germ list variables --debug" on the article
     Then the output should be as follows:

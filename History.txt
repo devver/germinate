@@ -1,3 +1,15 @@
+== 1.2.0 / 2009-07-21
+
+* 4 major enhancements
+  * Added "publish" command and pluggable publishers
+  * Added builtin publisher "shell" for publishing via shell command
+  * Added variables, settable with the :SET: directive
+  * Added the ability for commands to write changes back to the source file
+    (with backups)
+* 2 minor enhancements
+  * Refactored standard text transforms to be just another process
+  * Made the list/show/select command arguments easier to use
+
 == 1.1.0 / 2009-07-12
 
 * 1 major enhancement

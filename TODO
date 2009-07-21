@@ -33,9 +33,11 @@
   : germ publish stdout my_article.c
 * TODO Output line numbers for Reader errors                :usability:
 
-* TODO Gist uploads                                         :feature:
+* DONE Gist uploads                                         :feature:
+  CLOSED: [2009-07-21 Tue 10:54]
 
-* TODO Publishing to WordPress blogs (Atompub)              :feature:
+* DONE Publishing to WordPress blogs (Atompub)              :feature:
+  CLOSED: [2009-07-21 Tue 10:54]
 
 * TODO Alternate directive syntax                           :usability:
   one that doesn't conflict with RDoc
