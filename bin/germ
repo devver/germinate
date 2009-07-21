@@ -93,7 +93,7 @@ Main do
 
     def run
       with_source_file do |source, path|
-        @application.show(source, path, type, item)
+        @application.show(source, path, params['type'].value, params['item'].value)
       end
     end
   end
@@ -195,6 +195,7 @@ Main do
       lines.map{|l| "#{severity} -- #{progname}: #{l}"}.join("\n") + "\n"
     }
     @application = Germinate::Application.new(stdout, stderr)
+    @application.load_plugins!
   end
 
   def pre_parse_parameters

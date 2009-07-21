@@ -1,4 +1,5 @@
 # #!/usr/bin/env ruby
+# :PUBLISHER: source, gist
 # :BRACKET_CODE: <pre>, </pre>
 # :PROCESS: ruby, "ruby %f"
 
@@ -15,3 +16,4 @@ hello("World")
 
 # And here's the output:
 # :INSERT: @hello|ruby
+# :SET: 'GIST_ID', '150868'

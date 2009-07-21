@@ -8,18 +8,20 @@ class Germinate::Application
   def initialize(output, errors)
     @output       = output
     @error_output = errors
+    @log          = Germinate.logger
+    @plugins      = []
   end
 
   # Search Rubygems for Germinate plugins and load them
   def load_plugins!
-    Gem.find_files('germinate_plugin_v0_init').each do |file|
-      Kernel.load(file)
-    end
     $LOAD_PATH.each do |dir|
       plugin_init = Pathname(dir) + 'germinate_plugin_v0_init.rb'
       if plugin_init.readable?
-        Kernel.load(plugin_init)
+        load_plugin!(plugin_init.to_s)
       end
+    end
+    Gem.find_files('germinate_plugin_v0_init').each do |file|
+      load_plugin!(file)
     end
   end
 
@@ -40,9 +42,17 @@ class Germinate::Application
       @output.puts(librarian.process_names.join("\n"))
     when "publishers"
       @output.puts(*librarian.publisher_names)
+    when "all_publishers"
+      Germinate::Publisher.registered_publishers.keys do |p|
+        @output.puts(p)
+      end
     when "variables"
       librarian.variables.each_pair do |name, value|
         @output.puts("%-20s %s" % [name, value.to_s])
+      end
+    when "plugins"
+      @plugins.each do |plugin|
+        puts(plugin)
       end
     else
       raise "I don't know how to list '#{collection}'"
@@ -73,6 +83,7 @@ class Germinate::Application
   def publish(source, path, publisher, options={})
     librarian = load_librarian(source, path)
     librarian.publisher(publisher).publish!(@output, options)
+    librarian.store_changes!
   end
 
   def set(source, path, name, value)
@@ -90,5 +101,13 @@ class Germinate::Application
       reader << line
     end
     librarian
+  end
+
+  def load_plugin!(file)
+    unless @plugins.include?(file)
+      @log.debug "Loading plugin: #{file}"
+      Kernel.load(file)
+      @plugins << File.dirname(file)
+    end
   end
 end

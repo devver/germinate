@@ -3,6 +3,7 @@ require File.expand_path("publisher", File.dirname(__FILE__))
 
 class Germinate::Publisher
   Fattr :identifier
+  Fattr :registered_publishers => {}
 
   fattr :name
   fattr :librarian

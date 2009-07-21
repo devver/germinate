@@ -185,7 +185,7 @@ class Germinate::Reader
     librarian.add_process!(process_name, command)
   end
 
-  def publisher_control_line!(name, type, options)
+  def publisher_control_line!(name, type, options={})
     librarian.add_publisher!(name, type, symbolize_keys(options))
   end
 

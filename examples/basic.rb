@@ -1,3 +1,4 @@
+# :PUBLISHER: source, gist
 # A basic example of a Germinate article.
 #
 # This text is "front matter" and will not be included in the final article.
@@ -48,41 +49,41 @@ hello
 # If it doesn't find a %f, Germinate will pipe the source sample into the
 # command on its STDIN.
 #
-# Here's the result of \:INSERT: @hello|fred
+# Here's the result of :INSERT: @hello|fred
 # :INSERT: @hello|fred
 #
 # Here's the result of :INSERT: @hello|jane
 # :INSERT: @hello|jane
 #
 # We can even chain processes together. Here's the result of 
-# \:INSERT: @hello|jane|quote
+# :INSERT: @hello|jane|quote
 # :INSERT: @hello|jane|quote
 #
 # It's not necessary to quote whole code samples.  We can select specific lines
 # to excerpt using more advanced selectors.
 #
 # Select a single line
-# \:INSERT: @foo:2
+# :INSERT: @foo:2
 # :INSERT: @foo:2
 #
 # Select an inclusive range
-# \:INSERT: @foo:2..4
+# :INSERT: @foo:2..4
 # :INSERT: @foo:2..4
 #
 # Select an exclusive range
-# \:INSERT: @foo:1...3
+# :INSERT: @foo:1...3
 # :INSERT: @foo:1...3
 #
 # Select by starting line and length
-# \:INSERT: @foo:4,4
+# :INSERT: @foo:4,4
 # :INSERT: @foo:4,4
 #
 # Select by starting and ending regular expressions
-# \:INSERT: @foo:/do_stuff/../end/
+# :INSERT: @foo:/do_stuff/../end/
 # :INSERT: @foo:/do_stuff/../end/
 #
 # Select by regex and length
-# \:INSERT: @foo:/attr_reader/,3
+# :INSERT: @foo:/attr_reader/,3
 # :INSERT: @foo:/attr_reader/,3
 #
 # :SAMPLE: foo
@@ -99,7 +100,7 @@ end
 
 # :TEXT:
 # Finally, we can include all of the code samples in a single chunk with
-# \:INSERT: $CODE
+# :INSERT: $CODE
 # :INSERT: $CODE
 #
 # There are some other special section names, such as $SOURCE and $TEXT.  See
@@ -116,3 +117,7 @@ end
 #   germ select -s <selector>
 #
 # Enjoy!
+#
+# 1 2 3 5 6 7 8
+
+# :SET: 'GIST_ID', '150391'

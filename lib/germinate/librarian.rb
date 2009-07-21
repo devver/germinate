@@ -156,6 +156,10 @@ class Germinate::Librarian
     @processes.keys
   end
 
+  def publisher_names
+    @publishers.keys
+  end
+
   # fetch a publisher by name
   def publisher(publisher_name)
     @publishers.fetch(publisher_name)
@@ -167,6 +171,7 @@ class Germinate::Librarian
     @samples.key?(sample_name)
   end
 
+  # TODO Too big, refactor.
   def [](selector, origin="<Unknown>", template={})
     log.debug "Selecting #{selector}, from #{origin}"
     selector = case selector

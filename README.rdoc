@@ -74,6 +74,24 @@ Development of Germinate is graciously sponsored by Devver, purveyor of fine
 cloud-based services to busy Ruby developers.  If you like this tool please
 check them out at http://devver.net.
 
+== WHAT GERMINATE IS NOT
+
+Germinate is not a markup language like HTML, Textile, or Markdown.  It is
+completely markup-agnostic, although it can be configured to automatically
+pre-process your articles with markup tools before publishing.  Germinate
+concerns itslf strictly with bringing together your words and your code, and
+with automating the process of publishing the finished product.
+
+Germinate is not a code documentation tool.  While it facilitates the process of
+writing *about* code, it has no understanding of the code itself.  Germinate is
+orthogonal to tools such as RDoc or Doxygen.
+
+Germinate is not a blogging engine.  It is designed to integrate with your
+favorite blogging engine through publisher plugins.
+
+Germinate is none of these things, but it is designed to complement all of
+them.
+
 == FEATURES
 
 * Language and markup agnostic
@@ -81,20 +99,22 @@ check them out at http://devver.net.
 * Define arbitrary command pipelines to preprocess excerpts
 * Article text is reformatted to be more compatible with popular blogging 
   engines, e.g. WordPress.
+* Extensable with plugins for publishing to Gist, WordPress, etc.
 * Introspection commands make it easy to experiment
-* Fully tested
 
 == KNOWN ISSUES
 
 * Directive syntax conflicts with RDoc.  Doh!
+* Focus is currently on features.  Documentation is lacking.  Have a look at the
+  features/ directory to get a better idea of various Germinate features.
 
 == FUTURE
 
 * Integration with blogging platforms, e.g. WordPress
-* Integration with Github's Gist
 
 == REQUIREMENTS
 
+* Ruby 1.8
 * main
 * fattr
 * ick
@@ -110,7 +130,7 @@ check them out at http://devver.net.
 
 (The MIT License)
 
-Copyright (c) 2008
+Copyright (c) 2009
 
 Permission is hereby granted, free of charge, to any person obtaining
 a copy of this software and associated documentation files (the
