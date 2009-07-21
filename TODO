@@ -138,3 +138,6 @@
 
 * TODO Clean up output during tests                         :techdebt:
 * TODO Add a dry-run mode                                   :feature:
+* TODO Add a TITLE variable
+  Should be used by publishers.
+* TODO Make publishers more configurable

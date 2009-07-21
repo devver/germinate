@@ -110,7 +110,7 @@ them.
 
 == FUTURE
 
-* Integration with blogging platforms, e.g. WordPress
+* See the TODO file
 
 == REQUIREMENTS
 
@@ -125,6 +125,8 @@ them.
 == INSTALL:
 
   gem install --source http://gems.rubyforge.org devver-germinate
+  gem install --source http://gems.rubyforge.org devver-germinate-gist
+  gem install --source http://gems.rubyforge.org devver-germinate-atompub
 
 == LICENSE:
 
